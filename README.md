@@ -47,7 +47,7 @@ a better understanding of the trends in the different areas over time.
            v
 +-----------------+
 | Structured data |
-|   (CSV/JSON)    |
+|     (CSV)       |
 +-----------------+
          |
          v
@@ -63,15 +63,33 @@ a better understanding of the trends in the different areas over time.
 +----------------+
 ```
 
+#thoughts on what to scrape and how to structure the data 
++----------------------------------------------------------------------------------------------------------+
+| Before the data scraping step. I thought about what data fields                                          |
+| I want to scrape and how to structure that. Ultimately, what will be ingested into teh data pipeline and |
+| what will be the canonical data model. I also thought about how to detect changes in the data and how to |
+| report those changes in a meaningful way.                                                                |
++----------------------------------------------------------------------------------------------------------+
+
+#thoughts on CSV or JSON
++------------------------------------------------------------------------------------------------------------+
+| For the purpose of my project and the dashboard to be used [Streamlit.io](https://streamlit.io/). I've     |
+| chosen to go with CSV for its simplicity, transparacy, and native compatibility with Pandas and Streamlit. |
+| Visulizations are computed dynamically within the dashbaord layer. Intelligence will live in the Python,   |
+| Streamlit and derived views layer. This allows for more flexibility and interactivity in the dashboard,    |
+| as well as easier maintenance and updates to the data model without having to change the underlying        |
+| data storage format.                                                                                       |
++------------------------------------------------------------------------------------------------------------+
 
 
 # TECH
 
 **Web Scraping**
-- Python
- 
 
-**Data Processing & Normalization**
+- Python
+- Beautifulsoup 
+
+**Data Processing**
 
 
 **Change Detection & Reporting**
@@ -84,8 +102,10 @@ a better understanding of the trends in the different areas over time.
 - Git/GitHub
 - GitHub Actions
 
-
 # LEARNINGS
+
+
+
 
 # STATUS
 

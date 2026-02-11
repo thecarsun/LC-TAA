@@ -13,9 +13,14 @@ soup = BeautifulSoup(r.text, "html.parser")
 table_rows = soup.select("table tr")
 print(f"Found {len(table_rows)} rows")
 
-for row in table_rows[1:4]:
+for row in table_rows:
     cells = row.find_all("td")
-    if cells:
-        case_name = cells[0].text.strip()
-        status = cells[1].text.strip()
-        print(case_name, "|", status)
+    if not cells:
+        continue
+
+    print("---- NEW ROW ----")
+
+    for i, cell in enumerate(cells):
+        print(f"Column {i}: {cell.get_text(strip=True)}")
+
+    break  # Only inspect the first real row

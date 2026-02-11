@@ -32,7 +32,7 @@ a better understanding of the trends in the different areas over time.
 ![robots.txt](https://github.com/thecarsun/LC-TCA/blob/main/images/robotstxt.png)
 
 
-# ARCHETECTURE
+# PIPELINE
 
 ```
 +-----------------+

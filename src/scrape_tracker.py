@@ -68,8 +68,11 @@ def scrape_cases() -> list[dict]:
 
         issue_area = ", ".join([x for x in [issue_main, issue_sub] if x])
 
-        # v1: default false, we'll set true later via second-pass scrape if needed
+        # v1: Normalize: "state ag plaintiffs" default false, treat as tag
         state_ag_plaintiff = False
+        if executive_action.strip().lower() == "state ag plaintiffs":
+            state_ag_plaintiff = True
+            executive_action = ""
 
         cases.append(
             {
@@ -78,11 +81,11 @@ def scrape_cases() -> list[dict]:
                 "filed_date": filed_date,
                 "last_case_update_date": last_case_update_date,
                 "current_status": current_status,
-                "state_ag_plaintiff": str(state_ag_plaintiff).lower(),  # "false"
+                "state_ag_plaintiff": "false",
                 "issue_area": issue_area,
                 "executive_action": executive_action,
                 "case_url": case_url,
-                "source": SOURCE,
+                "source": Just Security,
                 "scraped_at": scraped_at,
             }
         )

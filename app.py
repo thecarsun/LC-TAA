@@ -3,6 +3,7 @@
 import pandas as pd
 import streamlit as st
 from pathlib import Path
+import re   
 
 st.set_page_config(page_title="Litigation Tracker Dashboard", layout="wide")
 
@@ -16,15 +17,33 @@ if not DATA_PATH.exists():
 
 df = pd.read_csv(DATA_PATH)
 
+def normalize_text(s: str) -> str:
+    s = str(s).lower()
+    s = re.sub(r"\s+", " ", s)              # collapse whitespace
+    s = re.sub(r"[^a-z0-9\s:/.-]", " ", s)  # strip odd punctuation but keep docket chars
+    return s.strip()
+
+df["search_text"] = (
+    df["case_name"].fillna("")
+    + " " + df["court"].fillna("")
+    + " " + df["current_status"].fillna("")
+    + " " + df["issue_area"].fillna("")
+    + " " + df["executive_action"].fillna("")
+).apply(normalize_text)
+
+
 # --- Basic cleanup ---
 df["filed_date"] = pd.to_datetime(df["filed_date"], errors="coerce")
 df["last_case_update_date"] = pd.to_datetime(df["last_case_update_date"], errors="coerce")
 
 # Sidebar filters
 st.sidebar.header("Filters")
+st.sidebar.caption("Search supports multiple keywords (e.g., 'immigration texas').")
+
 
 # Search
 search = st.sidebar.text_input("Search case name")
+
 
 # Status filter
 status_options = sorted([x for x in df["current_status"].dropna().unique()])
@@ -38,8 +57,12 @@ selected_issues = st.sidebar.multiselect("Issue area", issue_options, default=is
 exec_options = sorted([x for x in df["executive_action"].fillna("").unique()])
 selected_exec = st.sidebar.multiselect("Executive action", exec_options, default=exec_options)
 
-# State AG checkbox
-state_ag_only = st.sidebar.checkbox("State AG Plaintiff only", value=False)
+ag_filter = st.sidebar.selectbox(
+    "State AG",
+    ["All cases", "State AG Plaintiffs only"],
+    index=0
+)
+
 
 # Date range filter (filed date)
 min_date = df["filed_date"].min()
@@ -57,13 +80,15 @@ filtered = df[
     & df["executive_action"].fillna("").isin(selected_exec)
 ].copy()
 
+if ag_filter == "State AG Plaintiffs only":
+    filtered = filtered[filtered["state_ag_plaintiff"].astype(str).str.lower() == "true"]
+
 # Apply search
 if search:
-    filtered = filtered[filtered["case_name"].astype(str).str.contains(search, case=False, na=False)]
+    terms = [t for t in normalize_text(search).split() if t]
+    for t in terms:
+        filtered = filtered[filtered["search_text"].str.contains(t, na=False)]
 
-# Apply State AG checkbox
-if state_ag_only and "state_ag_plaintiff" in filtered.columns:
-    filtered = filtered[filtered["state_ag_plaintiff"].astype(str).str.lower() == "true"]
 
 # Apply date range
 if isinstance(date_range, tuple) and len(date_range) == 2 and all(date_range):

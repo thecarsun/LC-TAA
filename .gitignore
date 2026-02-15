@@ -10,7 +10,6 @@ __pycache__/
 
 # Data
 data/raw/
-data/processed/*.csv
 !data/processed/cases.csv
 
 # OS / IDE

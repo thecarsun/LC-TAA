@@ -1,3 +1,30 @@
+name: Update litigation tracker data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scrape-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scraper to generate CSV
+        run: |
+          python src/write_cases_csv.py
+
       - name: Commit and push updated CSV (if changed)
         run: |
           git config user.name "github-actions"
@@ -12,3 +39,6 @@
 
           git commit -m "Automated data update"
           git push
+
+
+ 

@@ -1,6 +1,7 @@
 #scraper that returns list of dicts that match my CSV header setup
 
 import re
+import sys
 from datetime import datetime, timezone
 import requests
 from bs4 import BeautifulSoup
@@ -17,7 +18,15 @@ def _is_iso_date(s: str) -> bool:
 
 def scrape_cases() -> list[dict]:
     r = requests.get(TRACKER_URL, headers=HEADERS, timeout=30)
+
+    # If running on GitHub Actions and site blocks it
+
+    if r.status_code == 403:
+        print("Skipped scrape: received 403 Forbidden (likely GitHub runner blocked).")
+        sys.exit(0)
+
     r.raise_for_status()
+
 
     soup = BeautifulSoup(r.text, "html.parser")
     rows = soup.select("table tr")

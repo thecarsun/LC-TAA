@@ -29,6 +29,13 @@ def write_csv(rows: list[dict]) -> None:
 
 if __name__ == "__main__":
     cases = scrape_cases()
+
+    # If scrape was skipped or returned nothing, do not overwrite the CSV
+    if not cases:
+        print("No cases scraped. Exiting without writing CSV.")
+        raise SystemExit(0)
+
     print(f"Writing {len(cases)} cases to {OUT_PATH}")
     write_csv(cases)
     print("Done.")
+

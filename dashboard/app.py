@@ -1,4 +1,4 @@
-#v1 app
+#v1.1 app
 
 import pandas as pd
 import streamlit as st
@@ -16,35 +16,79 @@ if not DATA_PATH.exists():
 
 df = pd.read_csv(DATA_PATH)
 
+# --- Basic cleanup ---
+df["filed_date"] = pd.to_datetime(df["filed_date"], errors="coerce")
+df["last_case_update_date"] = pd.to_datetime(df["last_case_update_date"], errors="coerce")
+
 # Sidebar filters
 st.sidebar.header("Filters")
 
+# Search
+search = st.sidebar.text_input("Search case name")
+
+# Status filter
 status_options = sorted([x for x in df["current_status"].dropna().unique()])
 selected_status = st.sidebar.multiselect("Case status", status_options, default=status_options)
 
-# Issue area can be multi-value in one string; keep it simple for v1
+# Issue filter
 issue_options = sorted([x for x in df["issue_area"].dropna().unique()])
 selected_issues = st.sidebar.multiselect("Issue area", issue_options, default=issue_options)
 
+# Executive action filter (allow blanks)
 exec_options = sorted([x for x in df["executive_action"].fillna("").unique()])
 selected_exec = st.sidebar.multiselect("Executive action", exec_options, default=exec_options)
 
+# State AG checkbox
 state_ag_only = st.sidebar.checkbox("State AG Plaintiff only", value=False)
+
+# Date range filter (filed date)
+min_date = df["filed_date"].min()
+max_date = df["filed_date"].max()
+
+date_range = st.sidebar.date_input(
+    "Filed date range",
+    value=(min_date.date() if pd.notna(min_date) else None,
+           max_date.date() if pd.notna(max_date) else None),
+)
 
 filtered = df[
     df["current_status"].isin(selected_status)
     & df["issue_area"].isin(selected_issues)
     & df["executive_action"].fillna("").isin(selected_exec)
-]
+].copy()
 
+# Apply search
+if search:
+    filtered = filtered[filtered["case_name"].astype(str).str.contains(search, case=False, na=False)]
+
+# Apply State AG checkbox
 if state_ag_only and "state_ag_plaintiff" in filtered.columns:
     filtered = filtered[filtered["state_ag_plaintiff"].astype(str).str.lower() == "true"]
 
-# Top metrics
-col1, col2 = st.columns(2)
-col1.metric("Total cases", len(df))
-col2.metric("Filtered cases", len(filtered))
+# Apply date range
+if isinstance(date_range, tuple) and len(date_range) == 2 and all(date_range):
+    start, end = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1])
+    filtered = filtered[(filtered["filed_date"] >= start) & (filtered["filed_date"] <= end)]
 
-# Show table
-st.dataframe(filtered, use_container_width=True)
+# Top metrics
+c1, c2, c3 = st.columns(3)
+c1.metric("Total cases", len(df))
+c2.metric("Filtered cases", len(filtered))
+c3.metric("Unique courts", filtered["court"].nunique())
+
+st.divider()
+
+# Chart: cases by status
+st.subheader("Cases by Status")
+status_counts = filtered["current_status"].value_counts()
+st.bar_chart(status_counts)
+
+st.divider()
+
+# Table view
+st.subheader("Cases")
+
+# Sort most recently filed first
+filtered_sorted = filtered.sort_values("filed_date", ascending=False)
+st.dataframe(filtered_sorted, use_container_width=True)
 

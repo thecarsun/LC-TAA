@@ -104,9 +104,28 @@ c3.metric("Unique courts", filtered["court"].nunique())
 st.divider()
 
 # Chart: cases by status
-st.subheader("Cases by Status")
-status_counts = filtered["current_status"].value_counts()
-st.bar_chart(status_counts)
+st.subheader("Cases by Issue Area")
+
+# Split comma-separated issue_area into individual tags
+issues = (
+    filtered["issue_area"]
+    .fillna("")
+    .astype(str)
+    .str.split(",")
+    .explode()
+    .str.strip()
+)
+
+issues = issues[issues != ""]  # drop blanks
+
+issue_counts = issues.value_counts()
+
+st.bar_chart(issue_counts)
+
+top_n = st.slider("Show top N issue areas", 5, 50, 20)
+st.bar_chart(issue_counts.head(top_n))
+
+
 
 st.divider()
 

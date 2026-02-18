@@ -1,6 +1,4 @@
-#v4 
-
-# v4 stable scrape + filters.json
+# v5 — stable scrape + site-aligned filters + cases.csv + filters.json
 # scrape_just_security_tracker.py
 
 from __future__ import annotations
@@ -9,12 +7,13 @@ import csv
 import json
 import re
 from typing import List, Dict, Tuple
+
 import requests
 from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
-# Your website table + the 4 filter fields (Issue & Executive Action are also table columns)
+# Website table + filter fields
 WANTED_COLS = [
     "Case Name",
     "Filings",
@@ -29,8 +28,10 @@ WANTED_COLS = [
 FILTER_FIELDS = ["State A.G.'s", "Case Status", "Issue", "Executive Action"]
 
 
+# ---------- text helpers ----------
+
 def clean_ws(s: str) -> str:
-    return re.sub(r"\s+", " ", s).strip()
+    return re.sub(r"\s+", " ", (s or "")).strip()
 
 
 def cell_text(td) -> str:
@@ -39,14 +40,21 @@ def cell_text(td) -> str:
     return clean_ws(text)
 
 
+# ---------- table discovery ----------
+
 def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
-    # Find the table whose header row includes these key columns
+    """
+    Finds the tracker table by looking for a header row containing key columns.
+    Returns (table, headers_as_text).
+    """
     for table in soup.find_all("table"):
         ths = [clean_ws(th.get_text(" ", strip=True)) for th in table.find_all("th")]
         if "Case Name" in ths and "Filings" in ths and "Date Case Filed" in ths:
             return table, ths
     return None, []
 
+
+# ---------- scrape ----------
 
 def scrape() -> List[Dict[str, str]]:
     resp = requests.get(
@@ -69,7 +77,7 @@ def scrape() -> List[Dict[str, str]]:
 
     missing = [c for c in WANTED_COLS if c not in idx]
     if missing:
-        raise RuntimeError(f"Expected columns not found in table header: {missing}\nFound: {headers}")
+        raise RuntimeError(f"Expected columns not found in table header: {missing}\nFound headers: {headers}")
 
     rows_out: List[Dict[str, str]] = []
     tbody = table.find("tbody") or table
@@ -79,11 +87,16 @@ def scrape() -> List[Dict[str, str]]:
         if not tds or len(tds) < len(headers):
             continue
 
+        # Build a full row keyed by *actual* header names
         full_row = {h: cell_text(tds[i]) if i < len(tds) else "" for h, i in idx.items()}
+
+        # Emit only the columns we care about, in our chosen order
         rows_out.append({col: full_row.get(col, "") for col in WANTED_COLS})
 
     return rows_out
 
+
+# ---------- outputs ----------
 
 def write_csv(rows: List[Dict[str, str]], path: str) -> None:
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
@@ -92,49 +105,52 @@ def write_csv(rows: List[Dict[str, str]], path: str) -> None:
         writer.writerows(rows)
 
 
-def split_filter_values(field: str, value: str) -> List[str]:
-    """
-    Turn a scraped cell into filter tokens.
-    - We used " | " as our separator, so split on that.
-    - Also split on ';' and '/' which sometimes appear in multi-item cells.
-    - For State A.G.'s we generally keep it as-is (often a single item).
-    """
-    value = clean_ws(value)
-    if not value:
-        return []
-
-    if field == "State A.G.'s":
-        return [value]  # don't split state names like "New York"
-
-    parts = re.split(r"\s*\|\s*|\s*;\s*|\s*/\s*", value)
-    parts = [p.strip() for p in parts if p.strip()]
-    return parts
-
-
-def build_filters(rows: List[Dict[str, str]]) -> Dict[str, List[str]]:
-    buckets: Dict[str, set] = {f: set() for f in FILTER_FIELDS}
-
-    for r in rows:
-        for f in FILTER_FIELDS:
-            for token in split_filter_values(f, r.get(f, "")):
-                buckets[f].add(token)
-
-    # Stable order for dropdowns
-    return {f: sorted(buckets[f]) for f in FILTER_FIELDS}
-
-
 def write_filters_json(filters: Dict[str, List[str]], path: str) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(filters, f, ensure_ascii=False, indent=2)
 
 
-if __name__ == "__main__":
-    rows = scrape()
-    print(f"Scraped {len(rows)} rows")
+# ---------- filter logic (site-aligned) ----------
 
-    write_csv(rows, "cases.csv")
-    print("Wrote cases.csv")
+def normalize_state_ag(value: str) -> str:
+    """
+    The site’s 'State A.G.'s' column often behaves like a flag (e.g., 'State A.G. Plaintiffs'),
+    so normalize empties + casing.
+    """
+    v = clean_ws(value)
+    if not v:
+        return "—"
+    if v.lower() == "state a.g. plaintiffs":
+        return "State A.G. Plaintiffs"
+    return v
 
-    filters = build_filters(rows)
-    write_filters_json(filters, "filters.json")
-    print("Wrote filters.json")
+
+def split_filter_values(field: str, value: str) -> List[str]:
+    """
+    IMPORTANT behavior:
+    - NEVER split Issue or Case Status (slashes '/' are part of real labels)
+    - ONLY split Executive Action (can be multi-valued)
+    - Normalize State A.G.'s into stable buckets
+    """
+    v = clean_ws(value)
+
+    if field == "State A.G.'s":
+        return [normalize_state_ag(v)]
+
+    if not v:
+        return []
+
+    # Keep as single labels (do not split on '/')
+    if field in ("Case Status", "Issue"):
+        return [v]
+
+    # Executive Action: split on our scraped separator and semicolons.
+    # (Do NOT split on '/' unless you confirm the site uses '/' as a delimiter there.)
+    if field == "Executive Action":
+        parts = re.split(r"\s*\|\s*|\s*;\s*", v)
+        return [p.strip() for p in parts if p.strip()]
+
+    return [v]
+
+
+def build_filters(rows: List[Dict[str, str]]) -> Dict[str, List[str]]:

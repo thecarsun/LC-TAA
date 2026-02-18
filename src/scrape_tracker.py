@@ -152,5 +152,46 @@ def split_filter_values(field: str, value: str) -> List[str]:
 
     return [v]
 
+#normalize 
+def normalize_issue(value: str) -> str:
+    """
+    Match the site's Issue dropdown (small set ~12):
+    - If our scraper introduced " | " due to line breaks, keep only the first/top-level part.
+    - Do NOT split on '/' (it's part of real labels).
+    """
+    v = clean_ws(value)
+    if not v:
+        return ""
+
+    # If BeautifulSoup inserted our " | " separator, treat anything after it as subtext
+    # and keep only the top-level Issue.
+    if " | " in v:
+        v = v.split(" | ", 1)[0].strip()
+
+    return v
+
+#split filter 
+def split_filter_values(field: str, value: str) -> List[str]:
+    v = clean_ws(value)
+
+    if field == "State A.G.'s":
+        return [normalize_state_ag(v)]
+
+    if not v:
+        return []
+
+    if field == "Issue":
+        top = normalize_issue(v)
+        return [top] if top else []
+
+    # Keep Case Status as a single label (slashes '/' are meaningful there too)
+    if field == "Case Status":
+        return [v]
+
+    if field == "Executive Action":
+        return parse_executive_action_tokens(v)
+
+    return [v]
+
 
 def build_filters(rows: List[Dict[str, str]]) -> Dict[str, List[str]]:

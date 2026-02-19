@@ -4,8 +4,8 @@ import json
 import pandas as pd
 import streamlit as st
 
-CASES_PATH = "processed/cases.csv"
-FILTERS_PATH = "processed/filters.json"
+CASES_PATH = "data/processed/cases.csv"
+FILTERS_PATH = "data/processed/filters.json"
 
 st.write("Working directory:", Path.cwd())
 st.write("processed/ exists?", Path("processed").exists())

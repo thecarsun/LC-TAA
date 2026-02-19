@@ -82,6 +82,19 @@ def scrape_rows() -> List[List[str]]:
 
     return rows
 
+def normalize_cols(cols):
+    out = []
+    for c in cols:
+        c = str(c)
+        c = c.replace("\ufeff", "")          # strip BOM if present
+        c = c.strip()
+        c = re.sub(r"[’']", "", c)
+        c = re.sub(r"[^0-9a-zA-Z]+", "_", c)
+        c = c.strip("_").lower()
+        out.append(c)
+    return out
+
+df.columns = normalize_cols(df.columns)
 
 def normalize_issue(v: str) -> str:
     v = clean_ws(v)

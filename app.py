@@ -31,6 +31,15 @@ df["search_text"] = (
     + " " + df["executive_action"].fillna("")
 ).apply(normalize_text)
 
+def normalize_cols(cols):
+    out = []
+    for c in cols:
+        c = c.strip()
+        c = re.sub(r"[’']", "", c)          # remove apostrophes
+        c = re.sub(r"[^0-9a-zA-Z]+", "_", c) # spaces/punct -> _
+        c = c.strip("_").lower()
+        out.append(c)
+    return out
 
 # --- Basic cleanup ---
 df["filed_date"] = pd.to_datetime(df["filed_date"], errors="coerce")

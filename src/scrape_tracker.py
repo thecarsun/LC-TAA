@@ -1,150 +1,142 @@
-from __future__ import annotations
 
-import csv
-import json
 import re
-from pathlib import Path
-from typing import List, Dict, Tuple
+import sys
+from datetime import datetime, timezone
+from collections import Counter
 
 import requests
 from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
+HEADERS = {"User-Agent": "US Litigation Tracker Bot / GitHub: thecarsun"}
+SOURCE = "Just Security"
 
-# Final CSV schema (what app.py expects)
-CASES_CSV_COLS = [
-    "case_name",
-    "filings",
-    "filed_date",
-    "state_ags",
-    "case_status",
-    "issue_area",
-    "executive_action",
-    "last_case_update",
-]
+def _norm(s: str) -> str:
+    return " ".join(str(s).strip().lower().split())
 
-def clean_ws(s: str) -> str:
-    return re.sub(r"\s+", " ", (s or "")).strip()
+def _is_iso_date(s: str) -> bool:
+    # Expect YYYY-MM-DD
+    return bool(s) and len(s) == 10 and s[4] == "-" and s[7] == "-"
 
-def cell_text(td) -> str:
-    return clean_ws(td.get_text(separator=" | ", strip=True))
-
-def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
-    for table in soup.find_all("table"):
-        thead = table.find("thead")
-        if not thead:
+def _find_tracker_table(soup: BeautifulSoup):
+    """
+    Find the tracker table by looking for header keywords.
+    This avoids accidentally scraping other tables on the page.
+    """
+    for table in soup.select("table"):
+        header_cells = table.select("tr th")
+        if not header_cells:
             continue
-        header_tr = thead.find("tr")
-        if not header_tr:
-            continue
+        headers = [_norm(h.get_text(" ", strip=True)) for h in header_cells]
 
-        headers = [clean_ws(th.get_text(" ", strip=True)) for th in header_tr.find_all("th", recursive=False)]
-        if "Case Name" in headers and "Filings" in headers and "Date Case Filed" in headers:
+        # Heuristics: the tracker table should have these concepts
+        if any("filed" in h for h in headers) and any("status" in h for h in headers):
             return table, headers
 
     return None, []
 
-def scrape_rows() -> List[List[str]]:
-    resp = requests.get(
-        TRACKER_URL,
-        headers={
-            "User-Agent": "Mozilla/5.0 (compatible; LitigationTrackerBot/1.0)",
-            "Accept-Language": "en-US,en;q=0.9",
-        },
-        timeout=30,
-    )
-    resp.raise_for_status()
 
-    soup = BeautifulSoup(resp.text, "html.parser")
-    table, headers = find_tracker_table(soup)
+def scrape_cases() -> list[dict]:
+    r = requests.get(TRACKER_URL, headers=HEADERS, timeout=30)
+
+    # GitHub Actions runners often get blocked (403). Exit
+    if r.status_code == 403:
+        print("Skipped scrape: received 403 Forbidden (GitHub runner blocked).")
+        sys.exit(0)
+
+    r.raise_for_status()
+
+    soup = BeautifulSoup(r.text, "html.parser")
+    table, headers = _find_tracker_table(soup)
     if table is None:
-        raise RuntimeError("Could not find tracker table (page structure may have changed).")
+        raise RuntimeError("Could not locate the tracker table (no matching headers found).")
 
-    tbody = table.find("tbody")
-    if not tbody:
-        raise RuntimeError("Tracker table has no <tbody> (page structure may have changed).")
+    # Build header - column index map
+    col = {h: i for i, h in enumerate(headers)}
 
-    rows: List[List[str]] = []
-    for tr in tbody.find_all("tr", recursive=False):
-        tds = tr.find_all("td", recursive=False)
-        if not tds:
+    def get_cell_text(cells, header_key: str) -> str:
+        """
+        Fetch cell text by header name. Returns "" if header not found.
+        """
+        idx = col.get(_norm(header_key))
+        if idx is None or idx >= len(cells):
+            return ""
+        return cells[idx].get_text(" ", strip=True)
+
+    scraped_at = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    cases: list[dict] = []
+
+    # Prefer tbody rows if present
+    rows = table.select("tbody tr") or table.select("tr")
+
+    for row in rows:
+        cells = row.find_all("td")
+        if not cells:
             continue
 
-        row_cells = [cell_text(td) for td in tds]
-        # Expect at least 8 cols: 0..7 are what we need
-        if len(row_cells) < 8:
-            continue
+        # Filed date (header-based)
+        filed_date = get_cell_text(cells, "filed date") or get_cell_text(cells, "filed")
+        filed_date = filed_date.strip()
+        if not _is_iso_date(filed_date):
+            continue  # skip header-like/malformed rows
 
-        rows.append(row_cells)
+        # Case cell (usually first column)
+        case_cell = cells[0]
+        case_name_raw = case_cell.get_text(" ", strip=True)
 
-    return rows
+        # Court is inside parentheses in the case cell (based on your observed pattern)
+        m = re.search(r"\(([^)]+)\)", case_name_raw)
+        court = m.group(1).strip() if m else ""
 
-def normalize_issue(v: str) -> str:
-    v = clean_ws(v)
-    if not v:
-        return ""
-    return v.split(" | ", 1)[0].strip()
+        # Remove "(court)" portion from displayed case name
+        case_name = re.sub(r"\([^)]+\)", "", case_name_raw).strip()
+        case_name = " ".join(case_name.split())  # normalize whitespace
 
-def normalize_exec_action(v: str) -> str:
-    v = clean_ws(v)
-    if not v:
-        return ""
-    return v.split(" | ", 1)[0].strip()
+        # URL inside case cell (CourtListener link typically)
+        a = case_cell.find("a")
+        case_url = a["href"] if a and a.has_attr("href") else ""
+        if case_url.startswith("/"):
+            case_url = "https://www.justsecurity.org" + case_url
 
-def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
-    out: List[Dict[str, str]] = []
-    for r in rows:
-        out.append({
-            "case_name": r[0],
-            "filings": r[1],
-            "filed_date": r[2],
-            "state_ags": r[3] if r[3] else "—",
-            "case_status": r[4],
-            "issue_area": normalize_issue(r[5]),
-            "executive_action": normalize_exec_action(r[6]),
-            "last_case_update": r[7],
-        })
-    return out
+        # Other fields (header-based)
+        executive_action = get_cell_text(cells, "executive action")
+        current_status = get_cell_text(cells, "case status") or get_cell_text(cells, "status")
+        issue_main = get_cell_text(cells, "issue")
+        issue_sub = get_cell_text(cells, "issue area")
+        last_case_update_date = get_cell_text(cells, "last case update") or get_cell_text(
+            cells, "last case update date"
+        )
 
-def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]]:
-    return {
-        "State AGs": sorted({c["state_ags"] for c in cases if c.get("state_ags")}),
-        "Case Status": sorted({c["case_status"] for c in cases if c.get("case_status")}),
-        "Issue": sorted({c["issue_area"] for c in cases if c.get("issue_area")}),
-        "Executive Action": sorted({c["executive_action"] for c in cases if c.get("executive_action")}),
-    }
+        issue_area = ", ".join([x for x in [issue_main, issue_sub] if x])
 
-def write_cases_csv(cases: List[Dict[str, str]], path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=CASES_CSV_COLS, quoting=csv.QUOTE_MINIMAL)
-        w.writeheader()
-        w.writerows(cases)
+        # Normalize State AG Plaintiffs: treat as a tag, not an executive action
+        state_ag_plaintiff = False
+        ea = executive_action.strip().lower()
+        if "state ag" in ea and "plaintiff" in ea:
+            state_ag_plaintiff = True
+            executive_action = ""
 
-def write_filters_json(filters: Dict[str, List[str]], path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(filters, f, ensure_ascii=False, indent=2)
+        cases.append(
+            {
+                "case_name": case_name,
+                "court": court,
+                "filed_date": filed_date,
+                "last_case_update_date": last_case_update_date,
+                "current_status": current_status,
+                "state_ag_plaintiff": str(state_ag_plaintiff).lower(),
+                "issue_area": issue_area,
+                "executive_action": executive_action,
+                "case_url": case_url,
+                "source": SOURCE,
+                "scraped_at": scraped_at,
+            }
+        )
 
-def main() -> None:
-    raw_rows = scrape_rows()
-    print(f"Found {len(raw_rows)} case rows (tbody)")
+    return cases
 
-    cases = build_cases(raw_rows)
-
-    cases_path = Path("data/processed/cases.csv")
-    filters_path = Path("data/processed/filters.json")
-
-    write_cases_csv(cases, cases_path)
-    print(f"Wrote {cases_path}")
-
-    filters = build_filters_from_cases(cases)
-    write_filters_json(filters, filters_path)
-    print(f"Wrote {filters_path}")
-
-    print("Filter option counts:")
-    for k, v in filters.items():
-        print(f" - {k}: {len(v)}")
 
 if __name__ == "__main__":
-    main()
+    data = scrape_cases()
+    print(f"Extracted {len(data)} cases")
+    for row in data[:3]:
+        print(row)

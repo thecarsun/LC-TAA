@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+
 import pandas as pd
 import streamlit as st
 
@@ -18,18 +19,9 @@ if not CASES_PATH.exists():
     st.error("cases.csv not found. Expected at: data/processed/cases.csv")
     st.stop()
 
-def read_csv_robust(path: Path) -> pd.DataFrame:
-    """
-    Try UTF-8 first; if that fails, fall back to cp1252/latin1
-    and never crash on encoding.
-    """
-    try:
-        return pd.read_csv(path, encoding="utf-8")
-    except UnicodeDecodeError:
-        try:
-            return pd.read_csv(path, encoding="cp1252")
-        except UnicodeDecodeError:
-            return pd.read_csv(path, encoding="latin1", encoding_errors="replace")
+# ---- VERY explicit read: latin1 never throws decode errors ----
+df = pd.read_csv(CASES_PATH, encoding="latin1")
+df = df.fillna("")
 
 def normalize_cols(cols):
     """Normalize column names to snake_case lower, strip BOM, spaces, punctuation."""
@@ -44,15 +36,13 @@ def normalize_cols(cols):
         out.append(c)
     return out
 
-# ---- Load and normalize ----
-df = read_csv_robust(CASES_PATH)
+# ---- Normalize column names ----
 df.columns = normalize_cols(df.columns)
-df = df.fillna("")
 
-# TEMP: show what columns we actually have
+# TEMP: inspect what we actually have
 st.write("Columns:", list(df.columns))
 
-# ---- Sanity check required columns ----
+# ---- Sanity-check required columns ----
 required = {
     "case_name",
     "filings",
@@ -68,7 +58,7 @@ if missing:
     st.error(f"cases.csv is missing expected columns: {missing}")
     st.stop()
 
-# ---- Dropdowns from CSV ----
+# ---- Dropdowns built from CSV ----
 state_ag = st.selectbox(
     "State A.G.'s",
     ["All"] + sorted(df["state_ags"].unique())
@@ -104,7 +94,7 @@ if issue != "All":
 if exec_action != "All":
     filtered = filtered[filtered["executive_action"] == exec_action]
 
-# ---- Display table (website columns) ----
+# ---- Display (website columns) ----
 visible_cols = [
     "case_name",
     "filings",

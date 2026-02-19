@@ -123,17 +123,13 @@ def write_filters_json(filters: Dict[str, List[str]], path: str) -> None:
 
 # ---------- filter logic (site-aligned) ----------
 
-def normalize_state_ag(value: str) -> str:
-    """
-    The site’s 'State A.G.'s' column often behaves like a flag (e.g., 'State A.G. Plaintiffs'),
-    so normalize empties + casing.
-    """
+def normalize_exec_action(value: str) -> str:
     v = clean_ws(value)
     if not v:
-        return "—"
-    if v.lower() == "state a.g. plaintiffs":
-        return "State A.G. Plaintiffs"
-    return v
+        return ""
+    head = v.split("(", 1)[0].strip()
+    return head if head else v
+
 
 
 def split_filter_values(field: str, value: str) -> List[str]:

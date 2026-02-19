@@ -5,7 +5,10 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(layout="wide")
-st.title("Litigation Tracker")
+st.title("Litigation Tracker — ENCODING TEST")
+
+st.write("App loaded successfully — no CSV read yet.")
+st.stop()
 
 BASE_DIR = Path(__file__).parent
 CASES_PATH = BASE_DIR / "data" / "processed" / "cases.csv"

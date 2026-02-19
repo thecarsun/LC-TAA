@@ -140,12 +140,12 @@ def build_filters(rows: List[List[str]]) -> Dict[str, List[str]]:
         "Executive Action": sorted(exec_actions),
     }
 
-
-def write_cases_csv(cases: List[Dict[str, str]], path: str) -> None:
-    with open(path, "w", newline="", encoding="utf-8-sig") as f:
+def write_cases_csv(cases, path):
+    with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=CASES_CSV_COLS, quoting=csv.QUOTE_MINIMAL)
         w.writeheader()
         w.writerows(cases)
+
 
 
 def write_filters_json(filters: Dict[str, List[str]], path: str) -> None:

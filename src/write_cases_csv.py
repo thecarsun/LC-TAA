@@ -14,14 +14,14 @@ from bs4 import BeautifulSoup
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
 WANTED_COLS = [
-    "Case Name",
-    "Filings",
-    "Date Case Filed",
-    "State A.G.'s",
-    "Case Status",
-    "Issue",
-    "Executive Action",
-    "Last Case Update",
+    "case_name",
+    "filings",
+    "filed_date",
+    "state_ags",
+    "case_status",
+    "issue_area",
+    "executive_action",
+    "last_case_update",
 ]
 
 FILTER_FIELDS = ["State A.G.'s", "Case Status", "Issue", "Executive Action"]

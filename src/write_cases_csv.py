@@ -1,3 +1,4 @@
+# write_cases_csv.py
 from __future__ import annotations
 
 import csv
@@ -11,7 +12,7 @@ from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
-# CSV schema - matching what i have in app.py
+# This MUST match the schema your app.py expects and what you showed in cases.csv
 CASES_CSV_COLS = [
     "case_name",
     "filings",
@@ -23,17 +24,20 @@ CASES_CSV_COLS = [
     "last_case_update",
 ]
 
+
 def clean_ws(s: str) -> str:
     return re.sub(r"\s+", " ", (s or "")).strip()
+
 
 def cell_text(td) -> str:
     # Keep multiple links readable
     return clean_ws(td.get_text(separator=" | ", strip=True))
 
+
 def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
     """
     Locate the tracker table by looking for a THEAD that includes
-    "Case Name", "Filings", and "Date Case Filed".
+    'Case Name', 'Filings', and 'Date Case Filed'.
     """
     for table in soup.find_all("table"):
         thead = table.find("thead")
@@ -54,11 +58,12 @@ def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[
 
     return None, []
 
+
 def scrape_rows() -> List[List[str]]:
     """
     Scrape the raw cell text rows from the tracker table.
 
-    Column index mapping (based on your earlier debug):
+    Based on your earlier debug, column index mapping:
       0 = Case Name
       1 = Filings
       2 = Date Case Filed
@@ -104,6 +109,7 @@ def scrape_rows() -> List[List[str]]:
 
     return rows
 
+
 def normalize_issue(v: str) -> str:
     """
     Issue should be a single top-level category.
@@ -114,6 +120,7 @@ def normalize_issue(v: str) -> str:
         return ""
     return v.split(" | ", 1)[0].strip()
 
+
 def normalize_exec_action(v: str) -> str:
     """
     Executive Action: keep the top-level label, trimming anything that comes
@@ -123,6 +130,7 @@ def normalize_exec_action(v: str) -> str:
     if not v:
         return ""
     return v.split(" | ", 1)[0].strip()
+
 
 def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
     """
@@ -142,10 +150,11 @@ def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
         })
     return out
 
+
 def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]]:
     """
     Build filter option lists directly from the normalized cases.
-    This keeps filters aligned with what app.py uses:
+    This keeps filters aligned with what app.py will use:
       - state_ags
       - case_status
       - issue_area
@@ -163,6 +172,7 @@ def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]
         "Executive Action": sorted(exec_actions),
     }
 
+
 def write_cases_csv(cases: List[Dict[str, str]], path: Path) -> None:
     """
     Write the normalized cases to data/processed/cases.csv in UTF-8.
@@ -173,6 +183,7 @@ def write_cases_csv(cases: List[Dict[str, str]], path: Path) -> None:
         writer.writeheader()
         writer.writerows(cases)
 
+
 def write_filters_json(filters: Dict[str, List[str]], path: Path) -> None:
     """
     Write filter options to data/processed/filters.json in UTF-8.
@@ -180,6 +191,7 @@ def write_filters_json(filters: Dict[str, List[str]], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(filters, f, ensure_ascii=False, indent=2)
+
 
 def main() -> None:
     raw_rows = scrape_rows()
@@ -201,6 +213,7 @@ def main() -> None:
     print("Filter option counts:")
     for k, v in filters.items():
         print(f" - {k}: {len(v)}")
+
 
 if __name__ == "__main__":
     main()

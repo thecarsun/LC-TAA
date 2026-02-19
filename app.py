@@ -1,3 +1,5 @@
+from pathlib import Path
+import streamlit as st
 import json
 import pandas as pd
 import streamlit as st
@@ -5,8 +7,17 @@ import streamlit as st
 CASES_PATH = "processed/cases.csv"
 FILTERS_PATH = "processed/filters.json"
 
+st.write("Working directory:", Path.cwd())
+st.write("processed/ exists?", Path("processed").exists())
+if Path("processed").exists():
+    st.write("processed/ files:", [p.name for p in Path("processed").iterdir()])
+
+st.write("cases.csv exists?", CASES_PATH.exists())
+st.write("filters.json exists?", FILTERS_PATH.exists())
+
 st.set_page_config(layout="wide")
 st.title("Litigation Tracker")
+
 
 def read_csv_robust(path: str) -> pd.DataFrame:
     for enc in ("utf-8", "utf-8-sig", "cp1252", "latin1"):

@@ -1,110 +1,118 @@
-from pathlib import Path
-import re
+#v1.1 app
 
 import pandas as pd
 import streamlit as st
+from pathlib import Path
+import re   
 
-st.set_page_config(layout="wide")
-st.title("Litigation Tracker — ENCODING TEST")
+st.set_page_config(page_title="Litigation Tracker Dashboard", layout="wide")
 
-st.write("App loaded successfully — no CSV read yet.")
-st.stop()
+DATA_PATH = Path("data/processed/cases.csv")
 
-BASE_DIR = Path(__file__).parent
-CASES_PATH = BASE_DIR / "data" / "processed" / "cases.csv"
+st.title("Litigation Tracker Dashboard")
 
-# --- Debug: confirm paths ---
-st.write("Working directory:", str(BASE_DIR))
-st.write("data/processed exists?", (BASE_DIR / "data" / "processed").exists())
-st.write("cases.csv exists?", CASES_PATH.exists())
-
-if not CASES_PATH.exists():
-    st.error("cases.csv not found. Expected at: data/processed/cases.csv")
+if not DATA_PATH.exists():
+    st.error(f"CSV not found at: {DATA_PATH}. Run your scraper to generate it.")
     st.stop()
 
-# ---- VERY explicit read: latin1 never throws decode errors ----
-df = pd.read_csv(CASES_PATH, encoding="latin1")
-df = df.fillna("")
+df = pd.read_csv(DATA_PATH)
 
-def normalize_cols(cols):
-    """Normalize column names to snake_case lower, strip BOM, spaces, punctuation."""
-    out = []
-    for c in cols:
-        c = str(c)
-        c = c.replace("\ufeff", "")          # strip BOM if present
-        c = c.strip()
-        c = re.sub(r"[’']", "", c)           # remove apostrophes/smart quotes
-        c = re.sub(r"[^0-9a-zA-Z]+", "_", c) # non-alnum -> underscore
-        c = c.strip("_").lower()
-        out.append(c)
-    return out
+def normalize_text(s: str) -> str:
+    s = str(s).lower()
+    s = re.sub(r"\s+", " ", s)              # collapse whitespace
+    s = re.sub(r"[^a-z0-9\s:/.-]", " ", s)  # strip odd punctuation but keep docket chars
+    return s.strip()
 
-# ---- Normalize column names ----
-df.columns = normalize_cols(df.columns)
+df["search_text"] = (
+    df["case_name"].fillna("")
+    + " " + df["court"].fillna("")
+    + " " + df["current_status"].fillna("")
+    + " " + df["issue_area"].fillna("")
+    + " " + df["executive_action"].fillna("")
+).apply(normalize_text)
 
-# TEMP: inspect what we actually have
-st.write("Columns:", list(df.columns))
 
-# ---- Sanity-check required columns ----
-required = {
-    "case_name",
-    "filings",
-    "filed_date",
-    "state_ags",
-    "case_status",
-    "issue_area",
-    "executive_action",
-    "last_case_update",
-}
-missing = sorted(required - set(df.columns))
-if missing:
-    st.error(f"cases.csv is missing expected columns: {missing}")
-    st.stop()
+# --- Basic cleanup ---
+df["filed_date"] = pd.to_datetime(df["filed_date"], errors="coerce")
+df["last_case_update_date"] = pd.to_datetime(df["last_case_update_date"], errors="coerce")
 
-# ---- Dropdowns built from CSV ----
-state_ag = st.selectbox(
-    "State A.G.'s",
-    ["All"] + sorted(df["state_ags"].unique())
+# Sidebar filters
+st.sidebar.header("Filters")
+st.sidebar.caption("Search supports multiple keywords (e.g., 'immigration texas').")
+
+
+# Search
+search = st.sidebar.text_input("Search case name")
+
+
+# Status filter
+status_options = sorted([x for x in df["current_status"].dropna().unique()])
+selected_status = st.sidebar.multiselect("Case status", status_options, default=status_options)
+
+# Issue filter
+issue_options = sorted([x for x in df["issue_area"].dropna().unique()])
+selected_issues = st.sidebar.multiselect("Issue area", issue_options, default=issue_options)
+
+# Executive action filter (allow blanks)
+exec_options = sorted([x for x in df["executive_action"].fillna("").unique()])
+selected_exec = st.sidebar.multiselect("Executive action", exec_options, default=exec_options)
+
+ag_filter = st.sidebar.selectbox(
+    "State AG",
+    ["All cases", "State AG Plaintiffs only"],
+    index=0
 )
 
-case_status = st.selectbox(
-    "Case Status",
-    ["All"] + sorted(df["case_status"].unique())
+
+# Date range filter (filed date)
+min_date = df["filed_date"].min()
+max_date = df["filed_date"].max()
+
+date_range = st.sidebar.date_input(
+    "Filed date range",
+    value=(min_date.date() if pd.notna(min_date) else None,
+           max_date.date() if pd.notna(max_date) else None),
 )
 
-issue = st.selectbox(
-    "Issue",
-    ["All"] + sorted(df["issue_area"].unique())
-)
+filtered = df[
+    df["current_status"].isin(selected_status)
+    & df["issue_area"].isin(selected_issues)
+    & df["executive_action"].fillna("").isin(selected_exec)
+].copy()
 
-exec_action = st.selectbox(
-    "Executive Action",
-    ["All"] + sorted(df["executive_action"].unique())
-)
+if ag_filter == "State AG Plaintiffs only":
+    filtered = filtered[filtered["state_ag_plaintiff"].astype(str).str.lower() == "true"]
 
-# ---- Apply filters ----
-filtered = df.copy()
+# Apply search
+if search:
+    terms = [t for t in normalize_text(search).split() if t]
+    for t in terms:
+        filtered = filtered[filtered["search_text"].str.contains(t, na=False)]
 
-if state_ag != "All":
-    filtered = filtered[filtered["state_ags"] == state_ag]
 
-if case_status != "All":
-    filtered = filtered[filtered["case_status"] == case_status]
+# Apply date range
+if isinstance(date_range, tuple) and len(date_range) == 2 and all(date_range):
+    start, end = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1])
+    filtered = filtered[(filtered["filed_date"] >= start) & (filtered["filed_date"] <= end)]
 
-if issue != "All":
-    filtered = filtered[filtered["issue_area"] == issue]
+# Top metrics
+c1, c2, c3 = st.columns(3)
+c1.metric("Total cases", len(df))
+c2.metric("Filtered cases", len(filtered))
+c3.metric("Unique courts", filtered["court"].nunique())
 
-if exec_action != "All":
-    filtered = filtered[filtered["executive_action"] == exec_action]
+st.divider()
 
-# ---- Display (website columns) ----
-visible_cols = [
-    "case_name",
-    "filings",
-    "filed_date",
-    "state_ags",
-    "case_status",
-    "last_case_update",
-]
+# Chart: cases by status
+st.subheader("Cases by Status")
+status_counts = filtered["current_status"].value_counts()
+st.bar_chart(status_counts)
 
-st.dataframe(filtered[visible_cols], use_container_width=True)
+st.divider()
+
+# Table view
+st.subheader("Cases")
+
+# Sort most recently filed first
+filtered_sorted = filtered.sort_values("filed_date", ascending=False)
+st.dataframe(filtered_sorted, use_container_width=True)

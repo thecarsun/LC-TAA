@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import csv
 import json
 import re
+from pathlib import Path
 from typing import List, Dict, Tuple
 
 import requests
@@ -9,7 +11,6 @@ from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
-# CSV columns must match the dict keys you write
 CASES_CSV_COLS = [
     "case_name",
     "filings",
@@ -21,19 +22,13 @@ CASES_CSV_COLS = [
     "last_case_update",
 ]
 
-FILTER_FIELDS = ["State AGs", "Case Status", "Issue", "Executive Action"]
-
-
 def clean_ws(s: str) -> str:
     return re.sub(r"\s+", " ", (s or "")).strip()
-
 
 def cell_text(td) -> str:
     return clean_ws(td.get_text(separator=" | ", strip=True))
 
-
-def find_tracker_table(soup: BeautifulSoup) -> Tuple[Beau
-                                                     tifulSoup | None, List[str]]:
+def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
     for table in soup.find_all("table"):
         thead = table.find("thead")
         if not thead:
@@ -45,8 +40,8 @@ def find_tracker_table(soup: BeautifulSoup) -> Tuple[Beau
         headers = [clean_ws(th.get_text(" ", strip=True)) for th in header_tr.find_all("th", recursive=False)]
         if "Case Name" in headers and "Filings" in headers and "Date Case Filed" in headers:
             return table, headers
-    return None, []
 
+    return None, []
 
 def scrape_rows() -> List[List[str]]:
     resp = requests.get(
@@ -82,33 +77,17 @@ def scrape_rows() -> List[List[str]]:
 
     return rows
 
-def normalize_cols(cols):
-    out = []
-    for c in cols:
-        c = str(c)
-        c = c.replace("\ufeff", "")          # strip BOM if present
-        c = c.strip()
-        c = re.sub(r"[’']", "", c)
-        c = re.sub(r"[^0-9a-zA-Z]+", "_", c)
-        c = c.strip("_").lower()
-        out.append(c)
-    return out
-
-df.columns = normalize_cols(df.columns)
-
 def normalize_issue(v: str) -> str:
     v = clean_ws(v)
     if not v:
         return ""
     return v.split(" | ", 1)[0].strip()
 
-
 def normalize_exec_action(v: str) -> str:
     v = clean_ws(v)
     if not v:
         return ""
     return v.split(" | ", 1)[0].strip()
-
 
 def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
     out: List[Dict[str, str]] = []
@@ -119,73 +98,52 @@ def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
             "filed_date": r[2],
             "state_ags": r[3] if r[3] else "—",
             "case_status": r[4],
-            "issue_area": normalize_issue(r[5]),          
-            "executive_action": normalize_exec_action(r[6]),  
+            "issue_area": normalize_issue(r[5]),
+            "executive_action": normalize_exec_action(r[6]),
             "last_case_update": r[7],
         })
     return out
 
-
-def build_filters(rows: List[List[str]]) -> Dict[str, List[str]]:
-    state_ags, statuses, issues, exec_actions = set(), set(), set(), set()
-
-    for r in rows:
-        if len(r) < 7:
-            continue
-
-        state_ags.add(r[3].strip() if r[3].strip() else "—")
-
-        status = r[4].strip()
-        if status:
-            statuses.add(status)
-
-        issue = normalize_issue(r[5])
-        if issue:
-            issues.add(issue)
-
-        ea = normalize_exec_action(r[6])
-        if ea:
-            exec_actions.add(ea)
-
+def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]]:
+    # Optional; Streamlit can also build these from CSV
     return {
-        "State AGs": sorted(state_ags),
-        "Case Status": sorted(statuses),
-        "Issue": sorted(issues),
-        "Executive Action": sorted(exec_actions),
+        "State AGs": sorted({c["state_ags"] for c in cases if c.get("state_ags")}),
+        "Case Status": sorted({c["case_status"] for c in cases if c.get("case_status")}),
+        "Issue": sorted({c["issue_area"] for c in cases if c.get("issue_area")}),
+        "Executive Action": sorted({c["executive_action"] for c in cases if c.get("executive_action")}),
     }
 
-write_cases_csv(cases, "data/processed/cases.csv")
-write_filters_json(filters, "data/processed/filters.json")
-
-def write_cases_csv(cases, path):
+def write_cases_csv(cases: List[Dict[str, str]], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=CASES_CSV_COLS, quoting=csv.QUOTE_MINIMAL)
         w.writeheader()
         w.writerows(cases)
 
-
-
-def write_filters_json(filters: Dict[str, List[str]], path: str) -> None:
+def write_filters_json(filters: Dict[str, List[str]], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(filters, f, ensure_ascii=False, indent=2)
-
 
 def main() -> None:
     raw_rows = scrape_rows()
     print(f"Found {len(raw_rows)} case rows (tbody)")
 
     cases = build_cases(raw_rows)
-    write_cases_csv(cases, "cases.csv")
-    print("Wrote cases.csv")
 
-    filters = build_filters(raw_rows)
-    write_filters_json(filters, "filters.json")
-    print("Wrote filters.json")
+    cases_path = Path("data/processed/cases.csv")
+    filters_path = Path("data/processed/filters.json")
+
+    write_cases_csv(cases, cases_path)
+    print(f"Wrote {cases_path}")
+
+    filters = build_filters_from_cases(cases)
+    write_filters_json(filters, filters_path)
+    print(f"Wrote {filters_path}")
 
     print("Filter option counts:")
     for k, v in filters.items():
         print(f" - {k}: {len(v)}")
-
 
 if __name__ == "__main__":
     main()

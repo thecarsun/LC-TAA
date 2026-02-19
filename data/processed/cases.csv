@@ -1,11 +1,1 @@
-CASES_CSV_COLS = [
-    "case_name",
-    "filings",
-    "filed_date",
-    "state_ags",
-    "case_status",
-    "issue_area",
-    "executive_action",
-    "last_case_update",
-]
-
+case_name,filings,filed_date,state_ags,case_status,issue_area,executive_action,last_case_update

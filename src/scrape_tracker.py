@@ -43,16 +43,20 @@ def cell_text(td) -> str:
 # ---------- table discovery ----------
 
 def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
-    """
-    Finds the tracker table by looking for a header row containing key columns.
-    Returns (table, headers_as_text).
-    """
     for table in soup.find_all("table"):
-        ths = [clean_ws(th.get_text(" ", strip=True)) for th in table.find_all("th")]
-        if "Case Name" in ths and "Filings" in ths and "Date Case Filed" in ths:
-            return table, ths
-    return None, []
+        thead = table.find("thead")
+        if not thead:
+            continue
 
+        header_tr = thead.find("tr")
+        if not header_tr:
+            continue
+
+        headers = [clean_ws(th.get_text(" ", strip=True)) for th in header_tr.find_all("th", recursive=False)]
+        if "Case Name" in headers and "Filings" in headers and "Date Case Filed" in headers:
+            return table, headers
+
+    return None, []
 
 # ---------- scrape ----------
 
@@ -80,12 +84,19 @@ def scrape() -> List[Dict[str, str]]:
         raise RuntimeError(f"Expected columns not found in table header: {missing}\nFound headers: {headers}")
 
     rows_out: List[Dict[str, str]] = []
-    tbody = table.find("tbody") or table
+       tbody = table.find("tbody")
+    if not tbody:
+        raise RuntimeError("Tracker table has no <tbody> (structure may have changed).")
 
-    for tr in tbody.find_all("tr"):
-        tds = tr.find_all(["td", "th"])
-        if not tds or len(tds) < len(headers):
+    for tr in tbody.find_all("tr", recursive=False):
+        tds = tr.find_all("td", recursive=False)
+        if len(tds) != len(headers):
+            # If mismatch, skip to avoid misaligned columns polluting filters
             continue
+
+    full_row = {headers[i]: cell_text(tds[i]) for i in range(len(headers))}
+    rows_out.append({col: full_row.get(col, "") for col in WANTED_COLS})
+
 
         # Build a full row keyed by *actual* header names
         full_row = {h: cell_text(tds[i]) if i < len(tds) else "" for h, i in idx.items()}

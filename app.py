@@ -24,7 +24,7 @@ def normalize_text(s: str) -> str:
     return s.strip()
 
 df["search_text"] = (
-    df["case_name"].fillna("")
+  df["case_name"] = df["case_name"].fillna("")
     + " " + df["court"].fillna("")
     + " " + df["current_status"].fillna("")
     + " " + df["issue_area"].fillna("")

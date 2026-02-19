@@ -3,7 +3,12 @@
 import pandas as pd
 import streamlit as st
 from pathlib import Path
-import re   
+import re  
+
+try:
+    df = pd.read_csv("processed/cases.csv", encoding="utf-8")
+except UnicodeDecodeError:
+    df = pd.read_csv("processed/cases.csv", encoding="cp1252")
 
 st.set_page_config(page_title="Litigation Tracker Dashboard", layout="wide")
 

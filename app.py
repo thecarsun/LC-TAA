@@ -28,7 +28,7 @@ def read_csv_robust(path: Path) -> pd.DataFrame:
 df = read_csv_robust(CASES_PATH).fillna("")
 
 # --- Dropdowns from CSV (works without filters.json) ---
-state_ag = st.selectbox("State AGs", ["All"] + sorted(df["state_ags"].unique()))
+state_ag = st.selectbox("State A.G.'s", ["All"] + sorted(df["state_ags"].unique()))
 case_status = st.selectbox("Case Status", ["All"] + sorted(df["case_status"].unique()))
 issue = st.selectbox("Issue", ["All"] + sorted(df["issue_area"].unique()))
 exec_action = st.selectbox("Executive Action", ["All"] + sorted(df["executive_action"].unique()))

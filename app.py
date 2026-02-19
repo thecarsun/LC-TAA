@@ -2,15 +2,18 @@ import json
 import pandas as pd
 import streamlit as st
 
+CASES_PATH = "processed/cases.csv"
+FILTERS_PATH = "processed/filters.json"
+
+st.set_page_config(layout="wide")
+st.title("Litigation Tracker")
+
 def read_csv_robust(path: str) -> pd.DataFrame:
-    # Try common encodings first
     for enc in ("utf-8", "utf-8-sig", "cp1252", "latin1"):
         try:
             return pd.read_csv(path, encoding=enc)
         except UnicodeDecodeError:
             continue
-
-    # Last resort: load *something* and replace bad bytes
     return pd.read_csv(path, encoding="utf-8", encoding_errors="replace")
 
 def read_json_robust(path: str) -> dict:
@@ -20,18 +23,42 @@ def read_json_robust(path: str) -> dict:
                 return json.load(f)
         except UnicodeDecodeError:
             continue
-
-    # Last resort
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         return json.load(f)
 
-# IMPORTANT: confirm paths
-CASES_PATH = "processed/cases.csv"
-FILTERS_PATH = "processed/filters.json"
-
-df = read_csv_robust(CASES_PATH)
+# ---- Load once (robust) ----
+df = read_csv_robust(CASES_PATH).fillna("")
 filters = read_json_robust(FILTERS_PATH)
 
-st.write("Loaded cases from:", CASES_PATH)
-st.write("Loaded filters from:", FILTERS_PATH)
-st.write("Columns:", list(df.columns))
+# Optional: debug (remove later)
+# st.write("Columns:", list(df.columns))
+
+# ---- Dropdowns ----
+state_ag = st.selectbox("State AGs", ["All"] + filters.get("State AGs", []))
+case_status = st.selectbox("Case Status", ["All"] + filters.get("Case Status", []))
+issue = st.selectbox("Issue", ["All"] + filters.get("Issue", []))
+exec_action = st.selectbox("Executive Action", ["All"] + filters.get("Executive Action", []))
+
+# ---- Filter df by existing CSV columns ----
+if state_ag != "All":
+    df = df[df["state_ags"] == state_ag]
+
+if case_status != "All":
+    df = df[df["case_status"] == case_status]
+
+if issue != "All":
+    df = df[df["issue_area"] == issue]
+
+if exec_action != "All":
+    df = df[df["executive_action"] == exec_action]
+
+# ---- Display (website columns) ----
+visible_cols = [
+    "case_name",
+    "filings",
+    "filed_date",
+    "state_ags",
+    "case_status",
+    "last_case_update",
+]
+st.dataframe(df[visible_cols], use_container_width=True)

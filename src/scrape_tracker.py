@@ -32,7 +32,8 @@ def cell_text(td) -> str:
     return clean_ws(td.get_text(separator=" | ", strip=True))
 
 
-def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
+def find_tracker_table(soup: BeautifulSoup) -> Tuple[Beau
+                                                     tifulSoup | None, List[str]]:
     for table in soup.find_all("table"):
         thead = table.find("thead")
         if not thead:

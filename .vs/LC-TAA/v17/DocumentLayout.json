@@ -11,8 +11,12 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Car\\grepos\\LC-TAA\\data\\schema.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:data\\schema.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Car\\grepos\\LC-TAA\\src\\write_cases_csv.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\write_cases_csv.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Car\\grepos\\LC-TAA\\data\\processed\\cases.csv||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:data\\processed\\cases.csv||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +26,22 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 6,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "app.py",
+              "DocumentMoniker": "C:\\Users\\Car\\grepos\\LC-TAA\\app.py",
+              "RelativeDocumentMoniker": "app.py",
+              "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\app.py",
+              "RelativeToolTip": "app.py",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAYwCUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-02-15T21:31:11.15Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -38,15 +56,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "app.py",
-              "DocumentMoniker": "C:\\Users\\Car\\grepos\\LC-TAA\\app.py",
-              "RelativeDocumentMoniker": "app.py",
-              "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\app.py",
-              "RelativeToolTip": "app.py",
-              "ViewState": "AgIAADcAAAAAAAAAAAAAwD8AAAABAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "cases.csv",
+              "DocumentMoniker": "C:\\Users\\Car\\grepos\\LC-TAA\\data\\processed\\cases.csv",
+              "RelativeDocumentMoniker": "data\\processed\\cases.csv",
+              "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\data\\processed\\cases.csv",
+              "RelativeToolTip": "data\\processed\\cases.csv",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002120|",
+              "WhenOpened": "2026-02-19T02:51:47.17Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "write_cases_csv.py",
+              "DocumentMoniker": "C:\\Users\\Car\\grepos\\LC-TAA\\src\\write_cases_csv.py",
+              "RelativeDocumentMoniker": "src\\write_cases_csv.py",
+              "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\src\\write_cases_csv.py",
+              "RelativeToolTip": "src\\write_cases_csv.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAANEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2026-02-15T21:31:11.15Z"
+              "WhenOpened": "2026-02-18T22:29:47.532Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -56,22 +88,10 @@
               "RelativeDocumentMoniker": "src\\scrape_tracker.py",
               "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\src\\scrape_tracker.py",
               "RelativeToolTip": "src\\scrape_tracker.py",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAYwKYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-02-15T19:53:06.654Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "schema.md",
-              "DocumentMoniker": "C:\\Users\\Car\\grepos\\LC-TAA\\data\\schema.md",
-              "RelativeDocumentMoniker": "data\\schema.md",
-              "ToolTip": "C:\\Users\\Car\\grepos\\LC-TAA\\data\\schema.md",
-              "RelativeToolTip": "data\\schema.md",
-              "ViewState": "AgIAABkAAAAAAAAAAAASwCEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-02-15T19:26:06.433Z"
             }
           ]
         }

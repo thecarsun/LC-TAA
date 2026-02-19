@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
+# Final CSV schema (what app.py expects)
 CASES_CSV_COLS = [
     "case_name",
     "filings",
@@ -55,7 +56,7 @@ def scrape_rows() -> List[List[str]]:
     resp.raise_for_status()
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    table, _headers = find_tracker_table(soup)
+    table, headers = find_tracker_table(soup)
     if table is None:
         raise RuntimeError("Could not find tracker table (page structure may have changed).")
 
@@ -70,6 +71,7 @@ def scrape_rows() -> List[List[str]]:
             continue
 
         row_cells = [cell_text(td) for td in tds]
+        # Expect at least 8 cols: 0..7 are what we need
         if len(row_cells) < 8:
             continue
 
@@ -105,7 +107,6 @@ def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
     return out
 
 def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]]:
-    # Optional; Streamlit can also build these from CSV
     return {
         "State AGs": sorted({c["state_ags"] for c in cases if c.get("state_ags")}),
         "Case Status": sorted({c["case_status"] for c in cases if c.get("case_status")}),

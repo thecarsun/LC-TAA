@@ -19,13 +19,17 @@ if not CASES_PATH.exists():
     st.stop()
 
 def read_csv_robust(path: Path) -> pd.DataFrame:
-    """Try several encodings so the app doesn't crash on weird characters."""
-    for enc in ("utf-8", "utf-8-sig", "cp1252", "latin1"):
+    """
+    Try UTF-8 first; if that fails, fall back to cp1252/latin1
+    and never crash on encoding.
+    """
+    try:
+        return pd.read_csv(path, encoding="utf-8")
+    except UnicodeDecodeError:
         try:
-            return pd.read_csv(path, encoding=enc)
+            return pd.read_csv(path, encoding="cp1252")
         except UnicodeDecodeError:
-            continue
-    return pd.read_csv(path, encoding="utf-8", encoding_errors="replace")
+            return pd.read_csv(path, encoding="latin1", encoding_errors="replace")
 
 def normalize_cols(cols):
     """Normalize column names to snake_case lower, strip BOM, spaces, punctuation."""

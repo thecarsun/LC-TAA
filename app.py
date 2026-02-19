@@ -12,8 +12,8 @@ st.write("processed/ exists?", Path("processed").exists())
 if Path("processed").exists():
     st.write("processed/ files:", [p.name for p in Path("processed").iterdir()])
 
-st.write("cases.csv exists?", CASES_PATH.exists())
-st.write("filters.json exists?", FILTERS_PATH.exists())
+st.write("data/processed/cases.csv exists?", CASES_PATH.exists())
+st.write("data/processed/cases.csv filters.json exists?", FILTERS_PATH.exists())
 
 st.set_page_config(layout="wide")
 st.title("Litigation Tracker")

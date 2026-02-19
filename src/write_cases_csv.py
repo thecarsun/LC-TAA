@@ -1,11 +1,9 @@
-# scrape_just_security_tracker.py
-# v5.3 — CLEAN (no duplicate functions), stable table parse, site-aligned filters
-
 from __future__ import annotations
 
 import csv
 import json
 import re
+from pathlib import Path
 from typing import List, Dict, Tuple
 
 import requests
@@ -13,7 +11,8 @@ from bs4 import BeautifulSoup
 
 TRACKER_URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/"
 
-WANTED_COLS = [
+# CSV schema - matching what i have in app.py
+CASES_CSV_COLS = [
     "case_name",
     "filings",
     "filed_date",
@@ -24,22 +23,18 @@ WANTED_COLS = [
     "last_case_update",
 ]
 
-FILTER_FIELDS = ["State A.G.'s", "Case Status", "Issue", "Executive Action"]
-
-
-# ---------------- helpers ----------------
-
 def clean_ws(s: str) -> str:
     return re.sub(r"\s+", " ", (s or "")).strip()
 
-
 def cell_text(td) -> str:
-    # Keep multi-item cells readable (Filings often has multiple links)
+    # Keep multiple links readable
     return clean_ws(td.get_text(separator=" | ", strip=True))
 
-
 def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[str]]:
-    # Find the table whose THEAD header row contains key columns
+    """
+    Locate the tracker table by looking for a THEAD that includes
+    "Case Name", "Filings", and "Date Case Filed".
+    """
     for table in soup.find_all("table"):
         thead = table.find("thead")
         if not thead:
@@ -59,10 +54,21 @@ def find_tracker_table(soup: BeautifulSoup) -> Tuple[BeautifulSoup | None, List[
 
     return None, []
 
+def scrape_rows() -> List[List[str]]:
+    """
+    Scrape the raw cell text rows from the tracker table.
 
-# ---------------- scrape ----------------
-
-def scrape() -> List[Dict[str, str]]:
+    Column index mapping (based on your earlier debug):
+      0 = Case Name
+      1 = Filings
+      2 = Date Case Filed
+      3 = State AGs
+      4 = Case Status
+      5 = Issue
+      6 = Executive Action
+      7 = Last Case Update
+      (8, 9 = summaries, which we're not using right now)
+    """
     resp = requests.get(
         TRACKER_URL,
         headers={
@@ -76,134 +82,125 @@ def scrape() -> List[Dict[str, str]]:
     soup = BeautifulSoup(resp.text, "html.parser")
     table, headers = find_tracker_table(soup)
     if table is None:
-        raise RuntimeError("Could not find the tracker table on the page (table structure may have changed).")
-
-    idx = {h: i for i, h in enumerate(headers)}
-    missing = [c for c in WANTED_COLS if c not in idx]
-    if missing:
-        raise RuntimeError(f"Expected columns not found in table header: {missing}\nFound headers: {headers}")
+        raise RuntimeError("Could not find tracker table (page structure may have changed).")
 
     tbody = table.find("tbody")
     if not tbody:
-        raise RuntimeError("Tracker table has no <tbody> (structure may have changed).")
+        raise RuntimeError("Tracker table has no <tbody> (page structure may have changed).")
 
-    rows_out: List[Dict[str, str]] = []
-
-    # Use only direct td children to remember true column alignment
+    rows: List[List[str]] = []
     for tr in tbody.find_all("tr", recursive=False):
         tds = tr.find_all("td", recursive=False)
-
-        # If the row doesn't match header length, skip it (prevents misalignment pollution)
-        if len(tds) != len(headers):
+        if not tds:
             continue
 
-        full_row = {headers[i]: cell_text(tds[i]) for i in range(len(headers))}
-        rows_out.append({col: full_row.get(col, "") for col in WANTED_COLS})
+        row_cells = [cell_text(td) for td in tds]
 
-    return rows_out
+        # We expect at least 8 columns (0..7 are required for our schema)
+        if len(row_cells) < 8:
+            continue
 
+        rows.append(row_cells)
 
-# ---------------- outputs ----------------
+    return rows
 
-def write_csv(rows: List[Dict[str, str]], path: str) -> None:
-    with open(path, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=WANTED_COLS, quoting=csv.QUOTE_MINIMAL)
+def normalize_issue(v: str) -> str:
+    """
+    Issue should be a single top-level category.
+    If formatting introduces separators like ' | ', keep only the first part.
+    """
+    v = clean_ws(v)
+    if not v:
+        return ""
+    return v.split(" | ", 1)[0].strip()
+
+def normalize_exec_action(v: str) -> str:
+    """
+    Executive Action: keep the top-level label, trimming anything that comes
+    after ' | ' if present.
+    """
+    v = clean_ws(v)
+    if not v:
+        return ""
+    return v.split(" | ", 1)[0].strip()
+
+def build_cases(rows: List[List[str]]) -> List[Dict[str, str]]:
+    """
+    Convert raw scraped rows into a list of dicts matching CASES_CSV_COLS.
+    """
+    out: List[Dict[str, str]] = []
+    for r in rows:
+        out.append({
+            "case_name": r[0],
+            "filings": r[1],
+            "filed_date": r[2],
+            "state_ags": r[3] if r[3] else "—",
+            "case_status": r[4],
+            "issue_area": normalize_issue(r[5]),
+            "executive_action": normalize_exec_action(r[6]),
+            "last_case_update": r[7],
+        })
+    return out
+
+def build_filters_from_cases(cases: List[Dict[str, str]]) -> Dict[str, List[str]]:
+    """
+    Build filter option lists directly from the normalized cases.
+    This keeps filters aligned with what app.py uses:
+      - state_ags
+      - case_status
+      - issue_area
+      - executive_action
+    """
+    state_ags = {c["state_ags"] for c in cases if c.get("state_ags")}
+    statuses = {c["case_status"] for c in cases if c.get("case_status")}
+    issues = {c["issue_area"] for c in cases if c.get("issue_area")}
+    exec_actions = {c["executive_action"] for c in cases if c.get("executive_action")}
+
+    return {
+        "State AGs": sorted(state_ags),
+        "Case Status": sorted(statuses),
+        "Issue": sorted(issues),
+        "Executive Action": sorted(exec_actions),
+    }
+
+def write_cases_csv(cases: List[Dict[str, str]], path: Path) -> None:
+    """
+    Write the normalized cases to data/processed/cases.csv in UTF-8.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=CASES_CSV_COLS, quoting=csv.QUOTE_MINIMAL)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(cases)
 
-
-def write_filters_json(filters: Dict[str, List[str]], path: str) -> None:
+def write_filters_json(filters: Dict[str, List[str]], path: Path) -> None:
+    """
+    Write filter options to data/processed/filters.json in UTF-8.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(filters, f, ensure_ascii=False, indent=2)
 
-
-# ---------------- filter normalization ----------------
-
-def normalize_state_ag(value: str) -> str:
-    v = clean_ws(value)
-    if not v:
-        return "—"
-    if v.lower() == "state a.g. plaintiffs":
-        return "State A.G. Plaintiffs"
-    return v
-
-
-def normalize_issue(value: str) -> str:
-    # Match the site's small Issue set: keep top-level label only
-    v = clean_ws(value)
-    if not v:
-        return ""
-    if " | " in v:
-        v = v.split(" | ", 1)[0].strip()
-    return v
-
-
-def normalize_exec_action(value: str) -> str:
-    # Match the site's dropdown more closely: top-level category before parentheses
-    v = clean_ws(value)
-    if not v:
-        return ""
-    head = v.split("(", 1)[0].strip()
-    return head if head else v
-
-
-def split_filter_values(field: str, value: str) -> List[str]:
-    v = clean_ws(value)
-    if field == "State A.G.'s":
-        return [normalize_state_ag(v)]
-
-    if not v:
-        return []
-
-    if field == "Issue":
-        x = normalize_issue(v)
-        return [x] if x else []
-
-    if field == "Case Status":
-        return [v]  # keep as-is (slashes '/' are meaningful)
-
-    if field == "Executive Action":
-        x = normalize_exec_action(v)
-        return [x] if x else []
-
-    return [v]
-
-
-def build_filters(rows: List[Dict[str, str]]) -> Dict[str, List[str]]:
-    buckets: Dict[str, set] = {f: set() for f in FILTER_FIELDS}
-
-    for r in rows:
-        for f in FILTER_FIELDS:
-            for token in split_filter_values(f, r.get(f, "")):
-                buckets[f].add(token)
-
-    return {f: sorted(buckets[f]) for f in FILTER_FIELDS}
-
-
-# ---------------- main ----------------
-
 def main() -> None:
-    rows = scrape()
-    write_csv(rows, "cases.csv")
+    raw_rows = scrape_rows()
+    print(f"Found {len(raw_rows)} case rows (tbody)")
 
-    filters = build_filters(rows)
-    write_filters_json(filters, "filters.json")
+    cases = build_cases(raw_rows)
 
-    # Debug: confirm you're close to the site's totals (650 is currently stated on the page)
-    print(f"Rows scraped: {len(rows)}")
+    base_dir = Path(__file__).parent
+    cases_path = base_dir / "data" / "processed" / "cases.csv"
+    filters_path = base_dir / "data" / "processed" / "filters.json"
+
+    write_cases_csv(cases, cases_path)
+    print(f"Wrote {cases_path}")
+
+    filters = build_filters_from_cases(cases)
+    write_filters_json(filters, filters_path)
+    print(f"Wrote {filters_path}")
+
     print("Filter option counts:")
-    for k in FILTER_FIELDS:
-        print(f" - {k}: {len(filters.get(k, []))}")
-
-    # Helpful peek
-    print("\nFirst 15 Issue options:")
-    for x in filters.get("Issue", [])[:15]:
-        print(" -", x)
-
-    print("\nFirst 15 Executive Action options:")
-    for x in filters.get("Executive Action", [])[:15]:
-        print(" -", x)
-
+    for k, v in filters.items():
+        print(f" - {k}: {len(v)}")
 
 if __name__ == "__main__":
     main()

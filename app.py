@@ -41,12 +41,12 @@ if case_status != "All": filtered = filtered[filtered["case_status"]      == cas
 if issue       != "All": filtered = filtered[filtered["issue_area"]       == issue]
 if exec_action != "All": filtered = filtered[filtered["executive_action"] == exec_action]
 if search:
-mask = (
-    filtered["case_name"].str.contains(search, case=False, na=False) |
-    filtered["issue_area"].str.contains(search, case=False, na=False) |
-    filtered["executive_action"].str.contains(search, case=False, na=False) |
-    filtered["case_status"].str.contains(search, case=False, na=False) |
-    filtered["state_ags"].str.contains(search, case=False, na=False)
+    mask = (
+        filtered["case_name"].str.contains(search, case=False, na=False) |
+        filtered["issue_area"].str.contains(search, case=False, na=False) |
+        filtered["executive_action"].str.contains(search, case=False, na=False) |
+        filtered["case_status"].str.contains(search, case=False, na=False) |
+        filtered["state_ags"].str.contains(search, case=False, na=False)
 )
 filtered = filtered[mask]
 

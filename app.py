@@ -24,13 +24,6 @@ df = load_data()
 # ---- Sidebar filters ----
 st.sidebar.header("Filters")
 
-@st.cache_data
-def load_data():
-    df = pd.read_csv(CASES_PATH, encoding="utf-8")
-    return df.fillna("")
-
-df = load_data()
-
 # TEMP DEBUG - remove after fixing
 st.write("Columns found:", list(df.columns))
 st.stop()

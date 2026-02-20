@@ -24,6 +24,7 @@ df = load_data()
 # ---- Sidebar filters ----
 st.sidebar.header("Filters")
 
+
 # TEMP DEBUG - remove after fixing
 st.write("Columns found:", list(df.columns))
 st.stop()

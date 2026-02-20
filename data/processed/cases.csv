@@ -1,4 +1,4 @@
-case_name,filings,filed_date,state_ags,case_status,issue_area,executive_action,last_case_update
+﻿case_name,filings,filed_date,state_ags,case_status,issue_area,executive_action,last_case_update
 "National Association of the Deaf v. Trump (D.D.C.)
 
 1:25-cv-01683",Complaint,2025-05-28,,Government Action Temporarily Blocked,Civil Liberties and Rights,Accessibility,2025-11-13
@@ -509,6 +509,9 @@ Amended Complaint 2025-07-04",2025-06-03,,Awaiting Court Ruling,Environment,Hal
 "League v. Department of Interior (D.D.C.)
 
 1:26-cv-00477",Complaint,2026-02-13,,Awaiting Court Ruling,Environment,Construction on Public Lands,2026-02-13
+"Lemmon v. Trump (D.D.C.)
+
+1:26-cv-00544",Complaint,2026-02-19,,Awaiting Court Ruling,,,2026-02-19
 "Center for Biological Diversity v. Burgum (D.D.C.)
 
 1:25-cv-04285",Complaint,2025-12-10,,Awaiting Court Ruling,Environment,Modifications to National Parks Pass,2025-12-10
@@ -1112,6 +1115,9 @@ Amended Complaint
 "Lucky Shoals Community Association, Inc. v. United States Environmental Protection Agency (N.D. Ga.)
 
 1:25-cv-07221",Complaint,2025-12-17,,Awaiting Court Ruling,"Government Grants, Loans, and Assistance",Unleashing American Energy (Executive Order No. 14154); Ending Radical and Wasteful Government DEI Programs and Preferencing (Executive Order 14151); Implementing the President’s “Department of Government Efficiency” Cost Efficiency Initiative (Executive Order 14222),2025-12-17
+"State of California v. Wright (N.D. Cal.)
+
+3:26-cv-01417",Complaint,2026-02-18,,Awaiting Court Ruling,,,2026-02-18
 "State of New York v. U.S. Department of Energy et al (D. Or.)
 
 6:25-cv-01458",Complaint,2025-08-15,State A.G. Plaintiffs,Government Action Blocked Pending Appeal,"Government Grants, Loans, and Assistance","Reduction of Indirect Cost Reimbursement Rate for State and Local Governments (DOE Policy Flash, May 8, 2025)",2026-01-09
@@ -1515,7 +1521,7 @@ First Amended Complaint 2025-03-17
 Second Amended Complaint 2025-03-27",2025-02-28,,Government Action Temporarily Blocked,Immigration and Citizenship,Immigration Policy - Termination of Categorical Parole Programs (Executive Order 14165),2026-01-24
 "Pedro Vasquez Perdomo v. Noem et al (C.D. Cal.)
 
-2:25-cv-05605",Complaint,2025-07-02,,Government Action Temporarily Blocked,Immigration and Citizenship,Immigration Raids and Arrests,2026-02-18
+2:25-cv-05605",Complaint,2025-07-02,,Government Action Temporarily Blocked,Immigration and Citizenship,Immigration Raids and Arrests,2026-02-19
 "Immigrant Advocates Response Collaborative v. Department of Justice (D.D.C.)
 
 1:25-cv-02279",Complaint,2025-07-16,,Awaiting Court Ruling,Immigration and Citizenship,Immigration Raids and Arrests,2025-10-21
@@ -2418,7 +2424,7 @@ Amended Complaint 2025-04-11",2025-04-04,,Awaiting Court Ruling,Trade Law,Tariff
 3:25-cv-03372",Complaint,2025-04-16,State A.G. Plaintiffs,Temporary Block of Government Action Denied,Trade Law,Tariffs,2025-09-12
 "Learning Resources v. Trump (D.D.C.)
 
-1:25-cv-01248",Complaint,2025-04-22,,Government Action Not Blocked Pending Appeal,Trade Law,Tariffs,2025-11-05
+1:25-cv-01248",Complaint,2025-04-22,,Government Action Not Blocked Pending Appeal,Trade Law,Tariffs,2026-02-20
 "Oregon v. U.S. Department of Homeland Security (Ct. Intl. Trade)
 
 1:25-cv-00077",Complaint,2025-04-23,State A.G. Plaintiffs,Government Action Not Blocked Pending Appeal,Trade Law,Tariffs,2025-11-05
@@ -2705,7 +2711,7 @@ First Supplemental Complaint
 1:25-cv-03948",Complaint,2025-11-14,,Awaiting Court Ruling,Transparency,Response to FOIA and Records Retention,2025-11-14
 "Protect Democracy Project v. U.S. Department of the Treasury (D.D.C.)
 
-1:25-cv-04101",Complaint,2025-11-24,,Awaiting Court Ruling,,Response to FOIA and Records Retention,2025-11-24
+1:25-cv-04101",Complaint,2025-11-24,,Awaiting Court Ruling,Transparency,Response to FOIA and Records Retention,2025-11-24
 "American Civil Liberties Union v. Department of Justice (S.D.N.Y.)
 
 1:25-cv-10189",Complaint,2025-12-09,,Awaiting Court Ruling,Transparency,Response to FOIA and Records Retention,2025-12-09

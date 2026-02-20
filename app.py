@@ -47,8 +47,8 @@ if search:
         filtered["executive_action"].str.contains(search, case=False, na=False) |
         filtered["case_status"].str.contains(search, case=False, na=False) |
         filtered["state_ags"].str.contains(search, case=False, na=False)
-)
-filtered = filtered[mask]
+    )
+    filtered = filtered[mask]
 
 # ---- Bar chart: Cases by Issue Area ----
 st.subheader("Cases by Issue Area")

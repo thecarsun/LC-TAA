@@ -42,12 +42,3 @@ jobs:
           fi
           git commit -m "Automated data update"
           git push
-```
-
-Also make sure `requirements.txt` includes:
-```
-playwright
-beautifulsoup4
-requests
-pandas
-streamlit

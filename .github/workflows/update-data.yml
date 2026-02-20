@@ -2,11 +2,12 @@ name: Update litigation tracker data
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"  # optional: runs daily at 6am UTC
 
 jobs:
   scrape-and-commit:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -21,24 +22,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run scraper to generate CSV
+      - name: Install Playwright browsers
         run: |
-          python src/write_cases_csv.py
+          python -m playwright install chromium
+          python -m playwright install-deps chromium
 
-      - name: Commit and push updated CSV (if changed)
+      - name: Run scraper
+        run: |
+          python src/scrape_tracker.py
+
+      - name: Commit and push updated CSV
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add data/processed/cases.csv
-
-          # If nothing changed, exit cleanly
+          git add data/processed/cases.csv data/processed/filters.json
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-
           git commit -m "Automated data update"
           git push
+```
 
-
- 
+Also make sure `requirements.txt` includes:
+```
+playwright
+beautifulsoup4
+requests
+pandas
+streamlit

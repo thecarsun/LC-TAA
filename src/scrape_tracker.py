@@ -1,4 +1,4 @@
-#v8
+
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
@@ -131,7 +131,7 @@ def scrape_all_cases(browser, issue_map: Dict[str, str]) -> List[Dict[str, str]]
                 "case_name":        name,
                 "filings":          tds[1].inner_text().strip(),
                 "filed_date":       tds[2].inner_text().strip(),
-                "state_ags":        tds[3].inner_text().strip() or "—",
+                "state_ags":        tds[3].inner_text().strip() or "",
                 "case_status":      tds[4].inner_text().strip(),
                 "last_case_update": tds[5].inner_text().strip(),
                 "issue_area":       issue_map.get(name, ""),

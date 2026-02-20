@@ -14,6 +14,7 @@ URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-t
 
 CASES_CSV_COLS = [
     "case_name",
+    "case_url"
     "filings",
     "filed_date",
     "state_ags",
@@ -127,8 +128,15 @@ def scrape_all_cases(browser, issue_map: Dict[str, str]) -> List[Dict[str, str]]
             if len(tds) < 6:
                 continue
             name = tds[0].inner_text().strip()
+            link = tds[0].evaluate("""
+                 el => {
+                const a = el.querySelector('a');
+                return a ? a.href : '';
+                 }
+              """)
             cases.append({
                 "case_name":        name,
+                "case_url":         link,
                 "filings":          tds[1].inner_text().strip(),
                 "filed_date":       tds[2].inner_text().strip(),
                 "state_ags":        tds[3].inner_text().strip() or "",

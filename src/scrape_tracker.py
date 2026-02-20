@@ -144,7 +144,7 @@ def scrape_all_cases(browser, issue_map: Dict[str, str]) -> List[Dict[str, str]]
 
 def write_cases_csv(cases: List[Dict], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", newline="", encoding="utf-8") as f:
+    with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=CASES_CSV_COLS)
         w.writeheader()
         w.writerows(cases)

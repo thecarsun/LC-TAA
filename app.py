@@ -32,7 +32,7 @@ issue       = st.sidebar.selectbox("Issue",            filter_options("issue_are
 exec_action = st.sidebar.selectbox("Executive Action", filter_options("executive_action"))
 
 # ---- Search box ----
-search = st.text_input("Search case name", placeholder="e.g. Trump, ACLU, immigration...")
+search = st.text_input("Search keywords", placeholder="e.g. tariffs, ACLU, immigration, DOGE...")
 
 # ---- Apply filters ----
 filtered = df.copy()
@@ -41,7 +41,14 @@ if case_status != "All": filtered = filtered[filtered["case_status"]      == cas
 if issue       != "All": filtered = filtered[filtered["issue_area"]       == issue]
 if exec_action != "All": filtered = filtered[filtered["executive_action"] == exec_action]
 if search:
-    filtered = filtered[filtered["case_name"].str.contains(search, case=False, na=False)]
+mask = (
+    filtered["case_name"].str.contains(search, case=False, na=False) |
+    filtered["issue_area"].str.contains(search, case=False, na=False) |
+    filtered["executive_action"].str.contains(search, case=False, na=False) |
+    filtered["case_status"].str.contains(search, case=False, na=False) |
+    filtered["state_ags"].str.contains(search, case=False, na=False)
+)
+filtered = filtered[mask]
 
 # ---- Bar chart: Cases by Issue Area ----
 st.subheader("Cases by Issue Area")

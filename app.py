@@ -31,17 +31,32 @@ case_status = st.sidebar.selectbox("Case Status",      filter_options("case_stat
 issue       = st.sidebar.selectbox("Issue",            filter_options("issue_area"))
 exec_action = st.sidebar.selectbox("Executive Action", filter_options("executive_action"))
 
+# ---- Search box ----
+search = st.text_input("Search case name", placeholder="e.g. Trump, ACLU, immigration...")
+
 # ---- Apply filters ----
 filtered = df.copy()
 if state_ag    != "All": filtered = filtered[filtered["state_ags"]       == state_ag]
 if case_status != "All": filtered = filtered[filtered["case_status"]      == case_status]
 if issue       != "All": filtered = filtered[filtered["issue_area"]       == issue]
 if exec_action != "All": filtered = filtered[filtered["executive_action"] == exec_action]
+if search:
+    filtered = filtered[filtered["case_name"].str.contains(search, case=False, na=False)]
+
+# ---- Bar chart: Cases by Issue Area ----
+st.subheader("Cases by Issue Area")
+issue_counts = (
+    filtered.groupby("issue_area")
+    .size()
+    .reset_index(name="count")
+    .sort_values("count", ascending=False)
+)
+st.bar_chart(issue_counts.set_index("issue_area")["count"])
 
 # ---- Summary ----
 st.caption(f"Showing {len(filtered)} of {len(df)} cases")
 
-# ---- Display ----
+# ---- Display table ----
 st.dataframe(
     filtered[[
         "case_name",

@@ -166,6 +166,11 @@ def main():
     cases_path = base / "data" / "processed" / "cases.csv"
     filters_path = base / "data" / "processed" / "filters.json"
 
+    # TEMP DEBUG
+    print(f"base: {base}")
+    print(f"cases_path: {cases_path}")
+    print(f"cases_path exists: {cases_path.exists()}")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
 

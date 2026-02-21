@@ -99,7 +99,7 @@ with chart_col1:
     )
     st.bar_chart(issue_counts.set_index("issue_area")["count"], horizontal=True)
 
-    with chart_col2:
+with chart_col2:
     st.subheader("Case Status Breakdown")
     import plotly.express as px
 

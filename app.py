@@ -67,6 +67,7 @@ st.caption(f"Showing {len(filtered)} of {len(df)} cases")
 st.dataframe(
     filtered[[
         "case_name",
+        "case_url",
         "filings",
         "filed_date",
         "state_ags",

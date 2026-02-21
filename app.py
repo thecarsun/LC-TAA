@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Litigation Tracker", layout="centered")
+st.set_page_config(page_title="Litigation Tracker", layout="wide")
 st.title("Litigation Tracker: Legal Challenges to Trump Administration Actions")
 st.info("For the best experience, view this dashboard on a desktop browser.")
 

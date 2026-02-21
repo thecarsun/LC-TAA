@@ -113,6 +113,11 @@ a better understanding of the trends in the different areas over time.
 
 Dashboard: Live at [LC-TAA](https://lc-taa.streamlit.app/) 
 
+Note: the dashboard is updated automatically at 6 AM Pacific Time
+
+**Future**
+- More to come
+
 ### MOOD
 
 Happy :) 

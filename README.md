@@ -9,7 +9,7 @@ My motivation is to build a automated visual dashboard to help me keep track of 
 a better understanding of the trends in the different areas over time.
 
 
-###WHAT
+### WHAT
 
 **This project will touch:**
 - Data collection (web scraping)
@@ -32,7 +32,7 @@ a better understanding of the trends in the different areas over time.
 ![robots.txt](https://github.com/thecarsun/LC-TCA/blob/main/images/robotstxt.png)
 
 
-###PIPELINE
+### PIPELINE
 
 ```
 +-----------------+
@@ -71,7 +71,7 @@ a better understanding of the trends in the different areas over time.
 ```                                                                                   
 
 
-# TECH
+### TECH
 
 **Web Scraping**
 
@@ -91,7 +91,7 @@ a better understanding of the trends in the different areas over time.
 - Git/GitHub
 - GitHub Actions
 
-# LEARNINGS
+### LEARNINGS
 
 - JustSecurity renders the table via JavaScript — requests/BeautifulSoup 
   cannot see it; a headless browser (Playwright) works instead
@@ -110,11 +110,11 @@ a better understanding of the trends in the different areas over time.
   stored in dropdown widgets and must be scraped separately per filter value
 
 
-# STATUS
+### STATUS
 
-Dashboard: Live at [!lc-taa](https://lc-taa.streamlit.app/) !!
+Dashboard: Live at [!lc-taa](https://lc-taa.streamlit.app/) 
 
-# MOOD
+### MOOD
 
 Happy :) 
 ***If you like this project and want to see more, please let me know! Feel free to reach out with any feedback/questions/suggestions. Thank you***

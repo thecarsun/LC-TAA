@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 st.set_page_config(page_title="Litigation Tracker", layout="wide")
@@ -20,7 +21,7 @@ def load_data():
 
 df = load_data()
 
-# ---- Scorecard metrics (always full dataset) ----
+# ---- Status groups ----
 plaintiff_win_statuses = [
     "Government Action Blocked",
     "Government Action Temporarily Blocked",
@@ -34,6 +35,7 @@ govt_win_statuses = [
     "Case Closed/Dismissed in Favor of Government",
 ]
 
+# ---- Scorecard metrics (always full dataset) ----
 total   = len(df)
 p_wins  = len(df[df["case_status"].isin(plaintiff_win_statuses)])
 g_wins  = len(df[df["case_status"].isin(govt_win_statuses)])
@@ -43,12 +45,12 @@ p_rate  = round((p_wins / decided) * 100) if decided > 0 else 0
 g_rate  = round((g_wins / decided) * 100) if decided > 0 else 0
 
 col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Total Cases",      total)
-col2.metric("Plaintiff Wins",   p_wins)
-col3.metric("Government Wins",  g_wins)
-col4.metric("Awaiting Ruling",  pending)
+col1.metric("Total Cases",        total)
+col2.metric("Plaintiff Wins",     p_wins)
+col3.metric("Government Wins",    g_wins)
+col4.metric("Awaiting Ruling",    pending)
 col5.metric("Plaintiff Win Rate", f"{p_rate}%")
-col6.metric("Govt Win Rate",    f"{g_rate}%")
+col6.metric("Govt Win Rate",      f"{g_rate}%")
 
 st.divider()
 
@@ -86,7 +88,7 @@ st.caption(f"Showing {len(filtered)} of {len(df)} cases")
 
 st.divider()
 
-# ---- Charts row 1: Issue Area bar + Win Rate ----
+# ---- Row 1: Issue Area bar + Donut ----
 chart_col1, chart_col2 = st.columns([2, 1])
 
 with chart_col1:
@@ -97,55 +99,149 @@ with chart_col1:
         .reset_index(name="count")
         .sort_values("count", ascending=True)
     )
-    st.bar_chart(issue_counts.set_index("issue_area")["count"], horizontal=True)
+    fig = px.bar(
+        issue_counts,
+        x="count",
+        y="issue_area",
+        orientation="h",
+        labels={"count": "Cases", "issue_area": ""},
+        color="count",
+        color_continuous_scale="Blues",
+    )
+    fig.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
+    st.plotly_chart(fig, use_container_width=True)
 
 with chart_col2:
     st.subheader("Case Status Breakdown")
-    import plotly.express as px
-
     status_counts = (
         filtered.groupby("case_status")
         .size()
         .reset_index(name="count")
         .sort_values("count", ascending=False)
     )
-
-    fig = px.pie(
+    fig2 = px.pie(
         status_counts,
         names="case_status",
         values="count",
-        hole=0.4,  # makes it a donut
+        hole=0.4,
         color_discrete_sequence=px.colors.qualitative.Set3,
     )
-    fig.update_traces(textposition="inside", textinfo="percent+label")
-    fig.update_layout(
-        showlegend=False,
+    fig2.update_traces(textposition="inside", textinfo="percent")
+    fig2.update_layout(
         margin=dict(t=0, b=0, l=0, r=0),
         height=350,
+        legend=dict(orientation="v", font=dict(size=9)),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()
 
-# ---- Charts row 2: Timeline + State AGs ----
-chart_col3, chart_col4 = st.columns(2)
+# ---- Row 2: Top 10 Executive Actions + Heatmap ----
+chart_col3, chart_col4 = st.columns([1, 1])
 
 with chart_col3:
-    st.subheader("Cases Filed Over Time")
-    timeline = filtered[filtered["filed_date"] != ""].copy()
-    if not timeline.empty:
-        timeline["filed_date"] = pd.to_datetime(timeline["filed_date"], errors="coerce")
-        timeline = timeline.dropna(subset=["filed_date"])
-        timeline["month"] = timeline["filed_date"].dt.to_period("M").astype(str)
-        monthly = (
-            timeline.groupby("month")
-            .size()
-            .reset_index(name="count")
-            .sort_values("month")
+    st.subheader("Top 10 Executive Actions")
+    exec_counts = (
+        filtered[filtered["executive_action"] != ""]
+        .groupby("executive_action")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=True)
+        .tail(10)
+    )
+    # Truncate long labels
+    exec_counts["label"] = exec_counts["executive_action"].str[:50] + "..."
+    fig3 = px.bar(
+        exec_counts,
+        x="count",
+        y="label",
+        orientation="h",
+        labels={"count": "Cases", "label": ""},
+        color="count",
+        color_continuous_scale="Oranges",
+    )
+    fig3.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
+    st.plotly_chart(fig3, use_container_width=True)
+
+with chart_col4:
+    st.subheader("Heatmap: Issue Area vs Case Status")
+    heatmap_data = (
+        filtered[
+            (filtered["issue_area"] != "") &
+            (filtered["case_status"] != "")
+        ]
+        .groupby(["issue_area", "case_status"])
+        .size()
+        .reset_index(name="count")
+    )
+    if not heatmap_data.empty:
+        heatmap_pivot = heatmap_data.pivot(
+            index="issue_area",
+            columns="case_status",
+            values="count"
+        ).fillna(0)
+        fig4 = px.imshow(
+            heatmap_pivot,
+            color_continuous_scale="RdYlGn",
+            labels=dict(x="Case Status", y="Issue Area", color="Cases"),
+            aspect="auto",
         )
-        st.bar_chart(monthly.set_index("month")["count"])
+        fig4.update_xaxes(tickangle=45)
+        fig4.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+        st.plotly_chart(fig4, use_container_width=True)
     else:
-        st.info("No date data available for current filter.")
+        st.info("Not enough data for heatmap with current filters.")
+
+st.divider()
+
+# ---- Row 3: Cumulative cases over time ----
+st.subheader("Cumulative Cases Filed Over Time")
+timeline = filtered[filtered["filed_date"] != ""].copy()
+if not timeline.empty:
+    timeline["filed_date"] = pd.to_datetime(timeline["filed_date"], errors="coerce")
+    timeline = timeline.dropna(subset=["filed_date"])
+    timeline = timeline.sort_values("filed_date")
+    timeline["month"] = timeline["filed_date"].dt.to_period("M").astype(str)
+    monthly = (
+        timeline.groupby("month")
+        .size()
+        .reset_index(name="new_cases")
+        .sort_values("month")
+    )
+    monthly["cumulative"] = monthly["new_cases"].cumsum()
+    fig5 = px.line(
+        monthly,
+        x="month",
+        y="cumulative",
+        labels={"month": "Month", "cumulative": "Total Cases Filed"},
+        markers=True,
+    )
+    fig5.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    fig5.update_xaxes(tickangle=45)
+    st.plotly_chart(fig5, use_container_width=True)
+else:
+    st.info("No date data available for current filters.")
+
+st.divider()
+
+# ---- Treemap: Issue Area -> Executive Action ----
+st.subheader("Treemap: Cases by Issue Area and Executive Action")
+treemap_data = filtered[
+    (filtered["issue_area"] != "") &
+    (filtered["executive_action"] != "")
+].copy()
+if not treemap_data.empty:
+    treemap_data["exec_short"] = treemap_data["executive_action"].str[:40] + "..."
+    fig6 = px.treemap(
+        treemap_data,
+        path=["issue_area", "exec_short"],
+        color="issue_area",
+        color_discrete_sequence=px.colors.qualitative.Pastel,
+    )
+    fig6.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=500)
+    st.plotly_chart(fig6, use_container_width=True)
+else:
+    st.info("Not enough data for treemap with current filters.")
 
 st.divider()
 

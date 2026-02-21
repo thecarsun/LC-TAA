@@ -115,6 +115,32 @@ with chart_col2:
     st.bar_chart(win_df.set_index("Party")["Win Rate %"])
     st.caption(f"Based on {f_decided} decided cases")
 
+    with chart_col2:
+    st.subheader("Case Status Breakdown")
+    import plotly.express as px
+
+    status_counts = (
+        filtered.groupby("case_status")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=False)
+    )
+
+    fig = px.pie(
+        status_counts,
+        names="case_status",
+        values="count",
+        hole=0.4,  # makes it a donut
+        color_discrete_sequence=px.colors.qualitative.Set3,
+    )
+    fig.update_traces(textposition="inside", textinfo="percent+label")
+    fig.update_layout(
+        showlegend=False,
+        margin=dict(t=0, b=0, l=0, r=0),
+        height=350,
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
 st.divider()
 
 # ---- Charts row 2: Timeline + State AGs ----

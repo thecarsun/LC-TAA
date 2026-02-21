@@ -99,22 +99,6 @@ with chart_col1:
     )
     st.bar_chart(issue_counts.set_index("issue_area")["count"], horizontal=True)
 
-with chart_col2:
-    st.subheader("Win Rate (filtered)")
-    f_decided = len(filtered[filtered["case_status"].isin(plaintiff_win_statuses)]) + \
-                len(filtered[filtered["case_status"].isin(govt_win_statuses)])
-    f_p_wins  = len(filtered[filtered["case_status"].isin(plaintiff_win_statuses)])
-    f_g_wins  = len(filtered[filtered["case_status"].isin(govt_win_statuses)])
-    f_p_rate  = round((f_p_wins / f_decided) * 100) if f_decided > 0 else 0
-    f_g_rate  = round((f_g_wins / f_decided) * 100) if f_decided > 0 else 0
-
-    win_df = pd.DataFrame({
-        "Party":      ["Plaintiffs", "Government"],
-        "Win Rate %": [f_p_rate,     f_g_rate],
-    })
-    st.bar_chart(win_df.set_index("Party")["Win Rate %"])
-    st.caption(f"Based on {f_decided} decided cases")
-
     with chart_col2:
     st.subheader("Case Status Breakdown")
     import plotly.express as px

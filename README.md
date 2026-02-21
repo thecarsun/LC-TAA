@@ -51,7 +51,6 @@ a better understanding of the trends in the different areas over time.
 +-----------------+
          | 
          v
-
 +-----------------+
 | Structured data |
 |     (CSV)       |
@@ -77,7 +76,7 @@ a better understanding of the trends in the different areas over time.
 
 - Python
 - Playwright (headless Chromium)
-- Tried Beautifulsoup - did not obtain results needed
+- Tried Beautifulsoup - did not obtain results desired
 
 **Data Processing**
 

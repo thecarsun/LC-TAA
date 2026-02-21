@@ -14,7 +14,7 @@ URL = "https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-t
 
 CASES_CSV_COLS = [
     "case_name",
-    "case_url"
+    "case_url",
     "filings",
     "filed_date",
     "state_ags",

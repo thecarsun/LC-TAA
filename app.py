@@ -200,6 +200,7 @@ timeline = filtered[filtered["filed_date"] != ""].copy()
 if not timeline.empty:
     timeline["filed_date"] = pd.to_datetime(timeline["filed_date"], errors="coerce")
     timeline = timeline.dropna(subset=["filed_date"])
+    timeline = timeline[timeline["filed_date"] >= "2025-01-01"]
     timeline = timeline.sort_values("filed_date")
     timeline["month"] = timeline["filed_date"].dt.to_period("M").astype(str)
     monthly = (

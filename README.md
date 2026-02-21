@@ -76,7 +76,7 @@ a better understanding of the trends in the different areas over time.
 
 - Python
 - Playwright (headless Chromium)
-- Tried Beautifulsoup - did not obtain results desired
+- Tried BeautifulSoup - did not obtain results desired
 
 **Data Processing**
 
@@ -111,9 +111,10 @@ a better understanding of the trends in the different areas over time.
 
 ### STATUS
 
-Dashboard: Live at [!lc-taa](https://lc-taa.streamlit.app/) 
+Dashboard: Live at [LC-TAA](https://lc-taa.streamlit.app/) 
 
 ### MOOD
 
 Happy :) 
+
 ***If you like this project and want to see more, please let me know! Feel free to reach out with any feedback/questions/suggestions. Thank you***

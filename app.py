@@ -20,35 +20,37 @@ def load_data():
 
 df = load_data()
 
-# ---- Scorecard metrics ----
-plaintiff_wins = [
+# ---- Scorecard metrics (always full dataset) ----
+plaintiff_win_statuses = [
     "Government Action Blocked",
     "Government Action Temporarily Blocked",
     "Government Action Blocked Pending Appeal",
     "Case Closed in Favor of Plaintiff",
     "Government Action Temporarily Blocked in Part; Temporary Block Denied in Part",
 ]
-govt_wins = [
+govt_win_statuses = [
     "Temporary Block of Government Action Denied",
     "Government Action Not Blocked Pending Appeal",
     "Case Closed/Dismissed in Favor of Government",
 ]
 
 total   = len(df)
-p_wins  = len(df[df["case_status"].isin(plaintiff_wins)])
-g_wins  = len(df[df["case_status"].isin(govt_wins)])
+p_wins  = len(df[df["case_status"].isin(plaintiff_win_statuses)])
+g_wins  = len(df[df["case_status"].isin(govt_win_statuses)])
 pending = len(df[df["case_status"] == "Awaiting Court Ruling"])
+decided = p_wins + g_wins
+p_rate  = round((p_wins / decided) * 100) if decided > 0 else 0
+g_rate  = round((g_wins / decided) * 100) if decided > 0 else 0
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Cases",     total)
-col2.metric("Plaintiff Wins",  p_wins)
-col3.metric("Government Wins", g_wins)
-col4.metric("Awaiting Ruling", pending)
+col1, col2, col3, col4, col5, col6 = st.columns(6)
+col1.metric("Total Cases",      total)
+col2.metric("Plaintiff Wins",   p_wins)
+col3.metric("Government Wins",  g_wins)
+col4.metric("Awaiting Ruling",  pending)
+col5.metric("Plaintiff Win Rate", f"{p_rate}%")
+col6.metric("Govt Win Rate",    f"{g_rate}%")
 
 st.divider()
-
-# ---- Sidebar filters ----
-st.sidebar.header("Filters")
 
 # ---- Sidebar filters ----
 st.sidebar.header("Filters")
@@ -60,7 +62,6 @@ state_ag    = st.sidebar.selectbox("State A.G.'s",    filter_options("state_ags"
 case_status = st.sidebar.selectbox("Case Status",      filter_options("case_status"))
 issue       = st.sidebar.selectbox("Issue",            filter_options("issue_area"))
 exec_action = st.sidebar.selectbox("Executive Action", filter_options("executive_action"))
-
 
 # ---- Search box ----
 search = st.text_input("Search keywords", placeholder="e.g. tariffs, ACLU, immigration, DOGE...")
@@ -81,20 +82,87 @@ if search:
     )
     filtered = filtered[mask]
 
-# ---- Bar chart: Cases by Issue Area ----
-st.subheader("Cases by Issue Area")
-issue_counts = (
-    filtered.groupby("issue_area")
-    .size()
-    .reset_index(name="count")
-    .sort_values("count", ascending=False)
-)
-st.bar_chart(issue_counts.set_index("issue_area")["count"])
-
-# ---- Summary ----
 st.caption(f"Showing {len(filtered)} of {len(df)} cases")
 
+st.divider()
+
+# ---- Charts row 1: Issue Area bar + Win Rate ----
+chart_col1, chart_col2 = st.columns([2, 1])
+
+with chart_col1:
+    st.subheader("Cases by Issue Area")
+    issue_counts = (
+        filtered.groupby("issue_area")
+        .size()
+        .reset_index(name="count")
+        .sort_values("count", ascending=True)
+    )
+    st.bar_chart(issue_counts.set_index("issue_area")["count"], horizontal=True)
+
+with chart_col2:
+    st.subheader("Win Rate (filtered)")
+    f_decided = len(filtered[filtered["case_status"].isin(plaintiff_win_statuses)]) + \
+                len(filtered[filtered["case_status"].isin(govt_win_statuses)])
+    f_p_wins  = len(filtered[filtered["case_status"].isin(plaintiff_win_statuses)])
+    f_g_wins  = len(filtered[filtered["case_status"].isin(govt_win_statuses)])
+    f_p_rate  = round((f_p_wins / f_decided) * 100) if f_decided > 0 else 0
+    f_g_rate  = round((f_g_wins / f_decided) * 100) if f_decided > 0 else 0
+
+    win_df = pd.DataFrame({
+        "Party":      ["Plaintiffs", "Government"],
+        "Win Rate %": [f_p_rate,     f_g_rate],
+    })
+    st.bar_chart(win_df.set_index("Party")["Win Rate %"])
+    st.caption(f"Based on {f_decided} decided cases")
+
+st.divider()
+
+# ---- Charts row 2: Timeline + State AGs ----
+chart_col3, chart_col4 = st.columns(2)
+
+with chart_col3:
+    st.subheader("Cases Filed Over Time")
+    timeline = filtered[filtered["filed_date"] != ""].copy()
+    if not timeline.empty:
+        timeline["filed_date"] = pd.to_datetime(timeline["filed_date"], errors="coerce")
+        timeline = timeline.dropna(subset=["filed_date"])
+        timeline["month"] = timeline["filed_date"].dt.to_period("M").astype(str)
+        monthly = (
+            timeline.groupby("month")
+            .size()
+            .reset_index(name="count")
+            .sort_values("month")
+        )
+        st.bar_chart(monthly.set_index("month")["count"])
+    else:
+        st.info("No date data available for current filter.")
+
+with chart_col4:
+    st.subheader("Most Active State A.G.'s")
+    ag_df = filtered[filtered["state_ags"].isin(["State A.G. Plaintiffs"])]
+    if not ag_df.empty:
+        ag_counts = (
+            ag_df.groupby("state_ags")
+            .size()
+            .reset_index(name="count")
+            .sort_values("count", ascending=False)
+            .head(10)
+        )
+        st.bar_chart(ag_counts.set_index("state_ags")["count"])
+    else:
+        # Show total AG cases vs non-AG cases
+        ag_total = len(filtered[filtered["state_ags"] == "State A.G. Plaintiffs"])
+        non_ag   = len(filtered[filtered["state_ags"] == ""])
+        ag_summary = pd.DataFrame({
+            "Type":  ["State A.G. Cases", "Non-AG Cases"],
+            "Count": [ag_total, non_ag],
+        })
+        st.bar_chart(ag_summary.set_index("Type")["Count"])
+
+st.divider()
+
 # ---- Display table ----
+st.subheader("Cases")
 st.dataframe(
     filtered[[
         "case_name",
@@ -105,6 +173,10 @@ st.dataframe(
         "case_status",
         "last_case_update",
     ]],
+    column_config={
+        "case_url":  st.column_config.LinkColumn("Case Link", display_text="View Case"),
+        "case_name": st.column_config.TextColumn("Case Name"),
+    },
     use_container_width=True,
     hide_index=True,
 )

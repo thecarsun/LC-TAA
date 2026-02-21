@@ -20,6 +20,36 @@ def load_data():
 
 df = load_data()
 
+# ---- Scorecard metrics ----
+plaintiff_wins = [
+    "Government Action Blocked",
+    "Government Action Temporarily Blocked",
+    "Government Action Blocked Pending Appeal",
+    "Case Closed in Favor of Plaintiff",
+    "Government Action Temporarily Blocked in Part; Temporary Block Denied in Part",
+]
+govt_wins = [
+    "Temporary Block of Government Action Denied",
+    "Government Action Not Blocked Pending Appeal",
+    "Case Closed/Dismissed in Favor of Government",
+]
+
+total   = len(df)
+p_wins  = len(df[df["case_status"].isin(plaintiff_wins)])
+g_wins  = len(df[df["case_status"].isin(govt_wins)])
+pending = len(df[df["case_status"] == "Awaiting Court Ruling"])
+
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Cases",     total)
+col2.metric("Plaintiff Wins",  p_wins)
+col3.metric("Government Wins", g_wins)
+col4.metric("Awaiting Ruling", pending)
+
+st.divider()
+
+# ---- Sidebar filters ----
+st.sidebar.header("Filters")
+
 # ---- Sidebar filters ----
 st.sidebar.header("Filters")
 
@@ -30,6 +60,7 @@ state_ag    = st.sidebar.selectbox("State A.G.'s",    filter_options("state_ags"
 case_status = st.sidebar.selectbox("Case Status",      filter_options("case_status"))
 issue       = st.sidebar.selectbox("Issue",            filter_options("issue_area"))
 exec_action = st.sidebar.selectbox("Executive Action", filter_options("executive_action"))
+
 
 # ---- Search box ----
 search = st.text_input("Search keywords", placeholder="e.g. tariffs, ACLU, immigration, DOGE...")

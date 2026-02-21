@@ -265,3 +265,11 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
 )
+
+# ---- Footer ----
+st.divider()
+st.caption(
+    "Data sourced from [JustSecurity.org](https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/) — "
+    "Please consider [supporting their work](https://www.justsecurity.org/donate/). | "
+    "Dashboard built by [Car](https://github.com/thecarsun), [More about this dashboard](https://github.com/thecarsun/LC-TAA/blob/main/README.md)"
+)

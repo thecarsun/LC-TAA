@@ -137,28 +137,6 @@ with chart_col3:
     else:
         st.info("No date data available for current filter.")
 
-with chart_col4:
-    st.subheader("Most Active State A.G.'s")
-    ag_df = filtered[filtered["state_ags"].isin(["State A.G. Plaintiffs"])]
-    if not ag_df.empty:
-        ag_counts = (
-            ag_df.groupby("state_ags")
-            .size()
-            .reset_index(name="count")
-            .sort_values("count", ascending=False)
-            .head(10)
-        )
-        st.bar_chart(ag_counts.set_index("state_ags")["count"])
-    else:
-        # Show total AG cases vs non-AG cases
-        ag_total = len(filtered[filtered["state_ags"] == "State A.G. Plaintiffs"])
-        non_ag   = len(filtered[filtered["state_ags"] == ""])
-        ag_summary = pd.DataFrame({
-            "Type":  ["State A.G. Cases", "Non-AG Cases"],
-            "Count": [ag_total, non_ag],
-        })
-        st.bar_chart(ag_summary.set_index("Type")["Count"])
-
 st.divider()
 
 # ---- Display table ----

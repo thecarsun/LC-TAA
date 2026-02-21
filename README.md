@@ -1,4 +1,4 @@
-# LC-TCA
+# LC-TAA (Legal Challenges against the Trump Administration Actions)
 
 **BACKGROUND/MOTIVATION**
 
@@ -9,7 +9,7 @@ My motivation is to build a automated visual dashboard to help me keep track of 
 a better understanding of the trends in the different areas over time.
 
 
-#WHAT
+###WHAT
 
 **This project will touch:**
 - Data collection (web scraping)
@@ -32,11 +32,11 @@ a better understanding of the trends in the different areas over time.
 ![robots.txt](https://github.com/thecarsun/LC-TCA/blob/main/images/robotstxt.png)
 
 
-# PIPELINE
+###PIPELINE
 
 ```
 +-----------------+
-| Justice Org site|
+| Justice Org     |
 +-----------------+
          |
          v
@@ -46,39 +46,29 @@ a better understanding of the trends in the different areas over time.
            | 
            v
 +-----------------+
+| Justice Org     |
+| Website Scraper |
++-----------------+
+         | 
+         v
+
++-----------------+
 | Structured data |
 |     (CSV)       |
 +-----------------+
          |
          v
  +----------------+
- | Auto-generated |
- | summaries      |
+ | GitHub Actions |
  +----------------+
          |
          v
 +----------------+
+| output to live |
 | Dashboard      | 
 | (Streamlit.io) |
 +----------------+
-```
-
-#thoughts on what to scrape and how to structure the data 
-
-Before the data scraping step. I thought about what data fields                                          
-I want to scrape and how to structure that. Ultimately, what will be ingested into teh data pipeline and 
-what will be the canonical data model. I also thought about how to detect changes in the data and how to
-report those changes in a meaningful way.                                                                
-
-
-#thoughts on CSV or JSON
-
-For the purpose of my project and the dashboard to be used [Streamlit.io](https://streamlit.io/). I've     
-chosen to go with CSV for its simplicity, transparacy, and native compatibility with Pandas and Streamlit.
-Visulizations are computed dynamically within the dashbaord layer. Intelligence will live in the Python,   
-Streamlit and derived views layer. This allows for more flexibility and interactivity in the dashboard,    
-as well as easier maintenance and updates to the data model without having to change the underlying       
-data storage format.                                                                                       
+```                                                                                   
 
 
 # TECH
@@ -86,16 +76,16 @@ data storage format.
 **Web Scraping**
 
 - Python
-- Beautifulsoup 
+- Playwright (headless Chromium)
+- Tried Beautifulsoup - did not obtain results needed
 
 **Data Processing**
 
-
-**Change Detection & Reporting**
-- Markdown
+- Pandas
 
 **Visualization & Dashboard**
 - Streamlit.io
+- Plotly 
 
 **Automation & Version Control**
 - Git/GitHub
@@ -103,9 +93,28 @@ data storage format.
 
 # LEARNINGS
 
+- JustSecurity renders the table via JavaScript — requests/BeautifulSoup 
+  cannot see it; a headless browser (Playwright) works instead
 
+- GitHub Actions cloud IPs are blocked by some sites — scraping must run locally from my computer
+  part of the automation will be scheduled to run locally  
+
+- Python version matters — Playwright requires 3.9-3.12; avoid 3.13/3.14 *Note to self: remember this*
+
+- UTF-8 encoding must be declared explicitly (utf-8-sig) for cross-platform CSV compatibility. I had gone through many many
+  painful hours troubleshooting this error and resulting in - grey hairs
+
+- Playwright dependencies (playwright) must not be in requirements.txt for Streamlit Cloud
+
+- Filter values (Issue, Executive Action) are not table columns — they are 
+  stored in dropdown widgets and must be scraped separately per filter value
 
 
 # STATUS
 
+Dashboard: Live at [!lc-taa](https://lc-taa.streamlit.app/) !!
+
 # MOOD
+
+Happy :) 
+***If you like this project and want to see more, please let me know! Feel free to reach out with any feedback/questions/suggestions. Thank you***

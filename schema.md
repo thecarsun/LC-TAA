@@ -1,4 +1,71 @@
-# canonical schema (v1)
+# Schema Documentation (v8)
+
+## data/processed/cases.csv
+
+Primary output file. One row per legal case tracked by JustSecurity.org.
+Encoding: UTF-8 with BOM (`utf-8-sig`)
+
+| Column | Type | Source | Description |
+|---|---|---|---|
+| `case_name` | string | Scraped | Full case name including court and docket number e.g. `National Association of the Deaf v. Trump (D.D.C.) 1:25-cv-01683` |
+| `case_url` | string | Scraped | URL to the case on CourtListener or other court docket system |
+| `filings` | string | Scraped | List of filings e.g. `Complaint`, `Amended Complaint` |
+| `filed_date` | string (YYYY-MM-DD) | Scraped | Date the case was originally filed |
+| `state_ags` | string | Scraped | Whether the case involves State A.G. plaintiffs. Value: `State A.G. Plaintiffs` or empty |
+| `case_status` | string | Scraped | Current status of the case. See status values below |
+| `issue_area` | string | Scraped via filter | Top-level issue category. Scraped by selecting each Issue filter dropdown option |
+| `executive_action` | string | Scraped via filter | Specific executive action being challenged. Scraped by selecting each Executive Action filter dropdown option |
+| `last_case_update` | string (YYYY-MM-DD) | Scraped | Date of the most recent update to the case |
+
+---
+
+## Case Status Values
+
+| Status | Meaning |
+|---|---|
+| `Government Action Blocked` | Court permanently blocked the action |
+| `Government Action Temporarily Blocked` | TRO or preliminary injunction in place |
+| `Government Action Blocked Pending Appeal` | Block maintained while appeal is heard |
+| `Case Closed in Favor of Plaintiff` | Case resolved, plaintiff won |
+| `Government Action Temporarily Blocked in Part; Temporary Block Denied in Part` | Mixed ruling |
+| `Temporary Block of Government Action Denied` | Court declined to block the action |
+| `Government Action Not Blocked Pending Appeal` | Action allowed to proceed during appeal |
+| `Case Closed/Dismissed in Favor of Government` | Case resolved, government won |
+| `Awaiting Court Ruling` | Case pending, no ruling yet |
+| `Case Closed` | Case closed without clear win/loss |
+
+---
+
+## data/processed/filters.json
+
+Lookup file containing all valid filter option values. Used to populate sidebar dropdowns in `app.py`.
+
+```json
+{
+  "State AGs": ["State A.G. Plaintiffs"],
+  "Case Status": ["Awaiting Court Ruling", "Case Closed", ...],
+  "Issue": ["Civil Liberties and Rights", "Environment", ...],
+  "Executive Action": ["Alien Enemies Act Removals", "Ban on DEIA Initiatives", ...]
+}
+```
+
+---
+
+## Scraping Notes
+
+- `issue_area` and `executive_action` are **not columns in the source table** — they are filter dropdown values on the JustSecurity page
+- Each filter value is selected one at a time via Playwright, and the resulting visible rows are tagged with that value
+- Total: 12 issue area loops + 121 executive action loops + 1 final full scrape
+- Each case maps to exactly **one** issue area and **one** executive action (confirmed: 653 unique cases, 653 unique mappings)
+- `case_url` is extracted from the `<a href>` tag inside the case name cell
+
+---
+
+## Source
+
+Data sourced from:
+**JustSecurity.org Litigation Tracker**
+https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/
 
 **PURPOSE**
 Converts the data from the [Just Security.Org](https://www.justsecurity.org/107087/tracker-litigation-legal-challenges-trump-administration/)
@@ -75,5 +142,4 @@ The dashboard computes these values dynamically:
 ---
 
 ## Versioning
-- This schema is v1 and may expand over time (e.g., adding richer metadata, optional case summaries, or future LLM-generated fields).
-Stay tuned....
+- This schema is v8 and may expand over time 

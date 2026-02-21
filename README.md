@@ -117,4 +117,4 @@ Dashboard: Live at [LC-TAA](https://lc-taa.streamlit.app/)
 
 Happy :) 
 
-***If you like this project and want to see more, please let me know! Feel free to reach out with any feedback/questions/suggestions. Thank you***
+*If you like this project and want to see more, please let me know! Feel free to reach out with any feedback/questions/suggestions. Thank you*

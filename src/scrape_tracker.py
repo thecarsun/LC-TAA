@@ -1,5 +1,6 @@
 
-# -*- coding: utf-8 -*-
+# v8 scraper
+
 from __future__ import annotations
 
 import csv
@@ -143,7 +144,7 @@ def scrape_all_cases(browser, issue_map: Dict[str, str]) -> List[Dict[str, str]]
                 "case_status":      tds[4].inner_text().strip(),
                 "last_case_update": tds[5].inner_text().strip(),
                 "issue_area":       issue_map.get(name, ""),
-                "executive_action": "",  # filled in after
+                "executive_action": "", 
             })
         return cases
     finally:

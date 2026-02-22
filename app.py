@@ -22,6 +22,10 @@ def load_data():
 
 df = load_data()
 
+# ---- Last updated timestamp ----
+latest_update = pd.to_datetime(df["last_case_update"], errors="coerce").max()
+st.caption(f"Data last updated: {latest_update.strftime('%B %d, %Y')}")
+
 # ---- Status groups ----
 plaintiff_win_statuses = [
     "Government Action Blocked",

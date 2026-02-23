@@ -8,7 +8,7 @@ echo Running scraper...
 py src/scrape_tracker.py
 
 echo Pushing to GitHub...
-git add data/processed/cases.csv data/processed/filters.json
+git add data/processed/cases.csv data/processed/filters.json data/processed/last_run.txt
 git commit -m "Automated data update %date%"
 git push
 

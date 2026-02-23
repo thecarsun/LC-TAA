@@ -2,7 +2,7 @@ name: Update litigation tracker data
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # runs daily at 6am UTC
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -11,19 +11,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install playwright pandas
-          playwright install chromium
-
-      - name: Run scraper
-        run: python src/scrape_tracker.py
 
       - name: Commit and push updated files
         run: |

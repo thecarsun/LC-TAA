@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import time
+from datetime import date
 from pathlib import Path
 from typing import Dict, List
 
@@ -211,7 +212,7 @@ def main():
 
     # Write last run timestamp
     last_run_path = base / "data" / "processed" / "last_run.txt"
-    last_run_path.write_text(pd.Timestamp.now().strftime("%Y-%m-%d"), encoding="utf-8")
+    last_run_path.write_text(date.today().strftime("%Y-%m-%d"), encoding="utf-8")
     print(f"Wrote {last_run_path}")
 
     # Clean up temp file

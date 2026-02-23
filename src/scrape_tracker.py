@@ -99,7 +99,7 @@ def scrape_issue_map(browser) -> Dict[str, str]:
 
 
 def scrape_exec_map(browser) -> Dict[str, str]:
-    """Returns case_name -> executive_action for all 653 cases."""
+    """Returns case_name -> executive_action for all cases."""
     exec_options = get_exec_action_options(browser)
     print(f"Found {len(exec_options)} executive actions")
 
@@ -209,10 +209,14 @@ def main():
     write_filters_json(cases, filters_path)
     print(f"Wrote {filters_path}")
 
+    # Write last run timestamp
+    last_run_path = base / "data" / "processed" / "last_run.txt"
+    last_run_path.write_text(pd.Timestamp.now().strftime("%Y-%m-%d"), encoding="utf-8")
+    print(f"Wrote {last_run_path}")
+
     # Clean up temp file
     Path("exec_map_progress.json").unlink(missing_ok=True)
     print("Done.")
-
 
 if __name__ == "__main__":
     main()

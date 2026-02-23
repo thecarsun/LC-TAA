@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# v8
 from pathlib import Path
 import pandas as pd
 import plotly.express as px
@@ -23,8 +23,13 @@ def load_data():
 df = load_data()
 
 # ---- Last updated timestamp ----
-latest_update = pd.to_datetime(df["last_case_update"], errors="coerce").max()
-st.caption(f"Data last updated: {latest_update.strftime('%B %d, %Y')}")
+last_run_path = BASE_DIR / "data" / "processed" / "last_run.txt"
+if last_run_path.exists():
+    last_run = pd.to_datetime(last_run_path.read_text(encoding="utf-8").strip())
+    st.caption(f"Scraper last run: {last_run.strftime('%B %d, %Y')}")
+else:
+    latest_update = pd.to_datetime(df["last_case_update"], errors="coerce").max()
+    st.caption(f"Data last updated: {latest_update.strftime('%B %d, %Y')}")
 
 # ---- Status groups ----
 plaintiff_win_statuses = [

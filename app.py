@@ -139,8 +139,8 @@ fig2 = px.pie(
 fig2.update_traces(textposition="inside", textinfo="percent")
 fig2.update_layout(
     margin=dict(t=0, b=0, l=0, r=0),
-    height=350,
-    legend=dict(orientation="h", font=dict(size=9)),
+    height=450,
+    legend=dict(orientation="h", font=dict(size=13)),
 )
 st.plotly_chart(fig2, use_container_width=True)
 

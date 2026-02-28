@@ -1,4 +1,4 @@
-# v8
+cd# v8.1
 from pathlib import Path
 import pandas as pd
 import plotly.express as px
@@ -45,24 +45,6 @@ govt_win_statuses = [
     "Case Closed/Dismissed in Favor of Government",
 ]
 
-# ---- Scorecard metrics (always full dataset) ----
-total   = len(df)
-p_wins  = len(df[df["case_status"].isin(plaintiff_win_statuses)])
-g_wins  = len(df[df["case_status"].isin(govt_win_statuses)])
-pending = len(df[df["case_status"] == "Awaiting Court Ruling"])
-decided = p_wins + g_wins
-p_rate  = round((p_wins / decided) * 100) if decided > 0 else 0
-g_rate  = round((g_wins / decided) * 100) if decided > 0 else 0
-
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Total Cases",        total)
-col2.metric("Plaintiff Wins",     p_wins)
-col3.metric("Government Wins",    g_wins)
-col4.metric("Awaiting Ruling",    pending)
-col5.metric("Plaintiff Win Rate", f"{p_rate}%")
-col6.metric("Govt Win Rate",      f"{g_rate}%")
-
-st.divider()
 
 # ---- Sidebar filters ----
 st.sidebar.header("Filters")
@@ -95,6 +77,25 @@ if search:
     filtered = filtered[mask]
 
 st.caption(f"Showing {len(filtered)} of {len(df)} cases")
+
+st.divider()
+
+# ---- Scorecard metrics (always full dataset) ----
+total   = len(df)
+p_wins  = len(df[df["case_status"].isin(plaintiff_win_statuses)])
+g_wins  = len(df[df["case_status"].isin(govt_win_statuses)])
+pending = len(df[df["case_status"] == "Awaiting Court Ruling"])
+decided = p_wins + g_wins
+p_rate  = round((p_wins / decided) * 100) if decided > 0 else 0
+g_rate  = round((g_wins / decided) * 100) if decided > 0 else 0
+
+col1, col2, col3, col4, col5, col6 = st.columns(6)
+col1.metric("Total Cases",        total)
+col2.metric("Plaintiff Wins",     p_wins)
+col3.metric("Government Wins",    g_wins)
+col4.metric("Awaiting Ruling",    pending)
+col5.metric("Plaintiff Win Rate", f"{p_rate}%")
+col6.metric("Govt Win Rate",      f"{g_rate}%")
 
 st.divider()
 

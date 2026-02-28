@@ -1,4 +1,4 @@
-# v8.1
+# v8.2
 from pathlib import Path
 import pandas as pd
 import plotly.express as px
@@ -99,53 +99,50 @@ col6.metric("Govt Win Rate",      f"{g_rate}%")
 
 st.divider()
 
-# ---- Row 1: Issue Area bar + Donut ----
-chart_col1, chart_col2 = st.columns([2, 1])
-
-with chart_col1:
-    st.subheader("Cases by Issue Area")
-    issue_counts = (
-        filtered.groupby("issue_area")
-        .size()
-        .reset_index(name="count")
-        .sort_values("count", ascending=True)
-    )
-    fig = px.bar(
-        issue_counts,
-        x="count",
-        y="issue_area",
-        orientation="h",
-        labels={"count": "Cases", "issue_area": ""},
-        color="count",
-        color_continuous_scale="Blues",
-    )
-    fig.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig, use_container_width=True)
-
-with chart_col2:
-    st.subheader("Case Status Breakdown")
-    status_counts = (
-        filtered.groupby("case_status")
-        .size()
-        .reset_index(name="count")
-        .sort_values("count", ascending=False)
-    )
-    fig2 = px.pie(
-        status_counts,
-        names="case_status",
-        values="count",
-        hole=0.4,
-        color_discrete_sequence=px.colors.qualitative.Set3,
-    )
-    fig2.update_traces(textposition="inside", textinfo="percent")
-    fig2.update_layout(
-        margin=dict(t=0, b=0, l=0, r=0),
-        height=350,
-        legend=dict(orientation="v", font=dict(size=9)),
-    )
-    st.plotly_chart(fig2, use_container_width=True)
+# ---- Issue Area bar (full width) ----
+st.subheader("Cases by Issue Area")
+issue_counts = (
+    filtered.groupby("issue_area")
+    .size()
+    .reset_index(name="count")
+    .sort_values("count", ascending=True)
+)
+fig = px.bar(
+    issue_counts,
+    x="count",
+    y="issue_area",
+    orientation="h",
+    labels={"count": "Cases", "issue_area": ""},
+    color="count",
+    color_continuous_scale="Blues",
+)
+fig.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
+st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
+
+# ---- Case Status Breakdown (full width) ----
+st.subheader("Case Status Breakdown")
+status_counts = (
+    filtered.groupby("case_status")
+    .size()
+    .reset_index(name="count")
+    .sort_values("count", ascending=False)
+)
+fig2 = px.pie(
+    status_counts,
+    names="case_status",
+    values="count",
+    hole=0.4,
+    color_discrete_sequence=px.colors.qualitative.Set3,
+)
+fig2.update_traces(textposition="inside", textinfo="percent")
+fig2.update_layout(
+    margin=dict(t=0, b=0, l=0, r=0),
+    height=350,
+    legend=dict(orientation="h", font=dict(size=9)),
+)
+st.plotly_chart(fig2, use_container_width=True)
 
 # ---- Row 2: Top 10 Executive Actions + Heatmap ----
 chart_col3, chart_col4 = st.columns([1, 1])

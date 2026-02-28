@@ -1,4 +1,4 @@
-# v8.2
+# v8.3
 from pathlib import Path
 import pandas as pd
 import plotly.express as px
@@ -140,69 +140,65 @@ fig2.update_traces(textposition="inside", textinfo="percent")
 fig2.update_layout(
     margin=dict(t=0, b=0, l=0, r=0),
     height=450,
-    legend=dict(orientation="h", font=dict(size=13)),
+    legend=dict(orientation="h", font=dict(size=14)),
 )
 st.plotly_chart(fig2, use_container_width=True)
 
-# ---- Row 2: Top 10 Executive Actions + Heatmap ----
-chart_col3, chart_col4 = st.columns([1, 1])
-
-with chart_col3:
-    st.subheader("Top 10 Executive Actions")
-    exec_counts = (
-        filtered[filtered["executive_action"] != ""]
-        .groupby("executive_action")
-        .size()
-        .reset_index(name="count")
-        .sort_values("count", ascending=True)
-        .tail(10)
-    )
-    # Truncate long labels
-    exec_counts["label"] = exec_counts["executive_action"].str[:50] + "..."
-    fig3 = px.bar(
-        exec_counts,
-        x="count",
-        y="label",
-        orientation="h",
-        labels={"count": "Cases", "label": ""},
-        color="count",
-        color_continuous_scale="Oranges",
-    )
-    fig3.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
-    st.plotly_chart(fig3, use_container_width=True)
-
-with chart_col4:
-    st.subheader("Heatmap: Issue Area vs Case Status")
-    heatmap_data = (
-        filtered[
-            (filtered["issue_area"] != "") &
-            (filtered["case_status"] != "")
-        ]
-        .groupby(["issue_area", "case_status"])
-        .size()
-        .reset_index(name="count")
-    )
-    if not heatmap_data.empty:
-        heatmap_pivot = heatmap_data.pivot(
-            index="issue_area",
-            columns="case_status",
-            values="count"
-        ).fillna(0)
-        fig4 = px.imshow(
-            heatmap_pivot,
-            color_continuous_scale="RdYlGn",
-            labels=dict(x="Case Status", y="Issue Area", color="Cases"),
-            aspect="auto",
-        )
-        fig4.update_xaxes(tickangle=45)
-        fig4.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-        st.plotly_chart(fig4, use_container_width=True)
-    else:
-        st.info("Not enough data for heatmap with current filters.")
+# ---- Top 10 Executive Actions (full width) ----
+st.subheader("Top 10 Executive Actions")
+exec_counts = (
+    filtered[filtered["executive_action"] != ""]
+    .groupby("executive_action")
+    .size()
+    .reset_index(name="count")
+    .sort_values("count", ascending=True)
+    .tail(10)
+)
+exec_counts["label"] = exec_counts["executive_action"].str[:50] + "..."
+fig3 = px.bar(
+    exec_counts,
+    x="count",
+    y="label",
+    orientation="h",
+    labels={"count": "Cases", "label": ""},
+    color="count",
+    color_continuous_scale="Oranges",
+)
+fig3.update_layout(coloraxis_showscale=False, margin=dict(l=0, r=0, t=0, b=0))
+st.plotly_chart(fig3, use_container_width=True)
 
 st.divider()
 
-# ---- Row 3: Cumulative cases over time ----
+# ---- Heatmap (full width) ----
+st.subheader("Heatmap: Issue Area vs Case Status")
+heatmap_data = (
+    filtered[
+        (filtered["issue_area"] != "") &
+        (filtered["case_status"] != "")
+    ]
+    .groupby(["issue_area", "case_status"])
+    .size()
+    .reset_index(name="count")
+)
+if not heatmap_data.empty:
+    heatmap_pivot = heatmap_data.pivot(
+        index="issue_area",
+        columns="case_status",
+        values="count"
+    ).fillna(0)
+    fig4 = px.imshow(
+        heatmap_pivot,
+        color_continuous_scale="RdYlGn",
+        labels=dict(x="Case Status", y="Issue Area", color="Cases"),
+        aspect="auto",
+    )
+    fig4.update_xaxes(tickangle=45)
+    fig4.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=400)
+    st.plotly_chart(fig4, use_container_width=True)
+else:
+    st.info("Not enough data for heatmap with current filters.")
+
+# ---- Cumulative cases over time ----
 st.subheader("Cumulative Cases Filed Over Time")
 timeline = filtered[filtered["filed_date"] != ""].copy()
 if not timeline.empty:

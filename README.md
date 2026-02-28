@@ -115,6 +115,10 @@ Dashboard: Live at [LC-TAA](https://lc-taa.streamlit.app/)
 
 Note: the dashboard is updated automatically at 6 AM Pacific Time
 
+**Updates**
+
+- `2.28.26`: Updated the scorecards to respond to filters and adjusted some charts and some of the very tiny dedault font sizes
+
 **Future**
 - More to come
 

@@ -144,6 +144,8 @@ fig2.update_layout(
 )
 st.plotly_chart(fig2, use_container_width=True)
 
+st.divider()
+
 # ---- Top 10 Executive Actions (full width) ----
 st.subheader("Top 10 Executive Actions")
 exec_counts = (
@@ -197,6 +199,8 @@ if not heatmap_data.empty:
     st.plotly_chart(fig4, use_container_width=True)
 else:
     st.info("Not enough data for heatmap with current filters.")
+
+st.divider()
 
 # ---- Cumulative cases over time ----
 st.subheader("Cumulative Cases Filed Over Time")

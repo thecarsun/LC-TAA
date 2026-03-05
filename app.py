@@ -15,7 +15,7 @@ if not CASES_PATH.exists():
     st.error("cases.csv not found. Run `py src/scrape_tracker.py` first.")
     st.stop()
 
-@st.cache_data
+@st.cache_data(ttl=86400) # cache expires 24 hours
 def load_data():
     df = pd.read_csv(CASES_PATH, encoding="utf-8-sig")
     return df.fillna("")

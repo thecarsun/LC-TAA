@@ -117,7 +117,10 @@ Note: the dashboard is updated automatically at 6 AM Pacific Time
 
 **Updates**
 
-- `2.28.26`: Updated the scorecards to respond to filters and adjusted some charts and some of the very tiny dedault font sizes
+- `2.28.26`: Updated the scorecards to respond to filters and adjusted some charts and some of the very tiny default font sizes
+- `3.04.26`: Streamlit Cache behavior fix. `@st.cache_data` caches the CSV in memory so it doesn't re-read it on every interaction. 
+  But when new data gets pushed to GitHub and Streamlit redeploys, the cache needs to be cleared to pick up the fresh CSV.
+  Fix: add `ttl`(time to live) to `@st.cache_data`to automatically expire and reread the CSV after a set time. 
 
 **Future**
 - More to come

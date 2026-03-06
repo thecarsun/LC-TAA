@@ -6,7 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import time
-from datetime import date
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
@@ -217,6 +217,12 @@ def main():
 
     # Clean up temp file
     Path("exec_map_progress.json").unlink(missing_ok=True)
+
+    # Write last run timestamp
+    last_run_path = base / "data" / "processed" / "last_run.txt"
+    with open(last_run_path, "w") as f:   
+        f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     print("Done.")
 
 if __name__ == "__main__":

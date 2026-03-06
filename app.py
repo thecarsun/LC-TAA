@@ -23,6 +23,7 @@ def load_data():
 df = load_data()
 
 # ---- Last updated timestamp ----
+latest_update = pd.to_datetime(df["last_case_update"], errors="coerce").max()
 last_run_path = BASE_DIR / "data" / "processed" / "last_run.txt"
 if last_run_path.exists():
     with open(last_run_path, "r") as f:

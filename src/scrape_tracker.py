@@ -210,12 +210,7 @@ def main():
     write_filters_json(cases, filters_path)
     print(f"Wrote {filters_path}")
 
-    # Write last run timestamp
-    last_run_path = base / "data" / "processed" / "last_run.txt"
-    last_run_path.write_text(date.today().strftime("%Y-%m-%d"), encoding="utf-8")
-    print(f"Wrote {last_run_path}")
-
-    # Clean up temp file
+     # Clean up temp file
     Path("exec_map_progress.json").unlink(missing_ok=True)
 
     # Write last run timestamp

@@ -1,11 +1,11 @@
 @echo off
-echo Starting LC-TAA data update... C:\Users\Car\grepos\LC-TAA\update_log.txt
+echo Starting LC-TAA data update... >> C:\Users\Car\grepos\LC-TAA\update_log.txt
 echo %date% %time% >> C:\Users\Car\grepos\LC-TAA\update_log.txt
 
 cd C:\Users\Car\grepos\LC-TAA
 
 echo Running scraper... ... >> C:\Users\Car\grepos\LC-TAA\update_log.txt
-C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python39_64\python.exe" src/scrape_tracker.py >> C:\Users\Car\grepos\LC-TAA\update_log.txt 2>&1
+"C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python39_64\python.exe" "C:\Users\Car\grepos\LC-TAA\src\scrape_tracker.py" >> C:\Users\Car\grepos\LC-TAA\update_log.txt 2>&1
 
 echo Pushing to GitHub... >> C:\Users\Car\grepos\LC-TAA\update_log.txt
 git add data/processed/cases.csv data/processed/filters.json data/processed/last_run.txt >> C:\Users\Car\grepos\LC-TAA\update_log.txt 2>&1

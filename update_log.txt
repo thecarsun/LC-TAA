@@ -3165,3 +3165,610 @@ Done!
 Wed 03/18/2026  6:00:07.63 
 Wed 03/18/2026  7:38:24.37 
 Running scraper... ... 
+Wed 03/18/2026  7:50:56.17 
+Running scraper... ... 
+base: C:\Users\Car\grepos\LC-TAA
+cases_path: C:\Users\Car\grepos\LC-TAA\data\processed\cases.csv
+cases_path exists: True
+=== Step 1: Scraping issue areas ===
+[1/12] Issue: Civil Liberties and Rights
+  -> 79 rows
+[2/12] Issue: Diversity, Equity, Inclusion, and Accessibility
+  -> 26 rows
+[3/12] Issue: Environment
+  -> 39 rows
+[4/12] Issue: Federalism
+  -> 7 rows
+[5/12] Issue: Government Grants, Loans, and Assistance
+  -> 140 rows
+[6/12] Issue: Immigration and Citizenship
+  -> 154 rows
+[7/12] Issue: International Institutions
+  -> 3 rows
+[8/12] Issue: Miscellaneous
+  -> 5 rows
+[9/12] Issue: Removal of Information from Government Websites
+  -> 5 rows
+[10/12] Issue: Structure of Government/Personnel
+  -> 138 rows
+[11/12] Issue: Trade Law
+  -> 8 rows
+[12/12] Issue: Transparency
+  -> 98 rows
+Issue map: 702 cases
+
+=== Step 2: Scraping executive actions ===
+Found 129 executive actions
+[1/129] Exec: “Fork Directive” Deferred Resignation Offer to Federal Emplo
+  -> 1 rows
+[2/129] Exec: “Temporary Pause” of Grants, Loans, and Assistance Programs
+  -> 7 rows
+[3/129] Exec: Access of Lawyers to Immigrants in Detention (Executive Orde
+  -> 5 rows
+[4/129] Exec: Access to Health Care
+  -> 5 rows
+[5/129] Exec: Accessibility
+  -> 1 rows
+[6/129] Exec: Action Against Law Firms and Lawyers (Executive Order 14230 
+  -> 9 rows
+[7/129] Exec: Actions Against LGBTQ+ Government Employees
+  -> 2 rows
+[8/129] Exec: Actions toward International Criminal Court (Executive Order
+  -> 3 rows
+[9/129] Exec: Actions Toward Universities (Executive Order 14188, Pause or
+  -> 7 rows
+[10/129] Exec: Actions Toward US Institute of Peace
+  -> 2 rows
+[11/129] Exec: Agency Data Sharing for Immigration Enforcement Purposes (Ex
+  -> 3 rows
+[12/129] Exec: Alien Enemies Act Removals (Presidential Proclamation 10903)
+  -> 14 rows
+[13/129] Exec: Annual Asylum Fee
+  -> 1 rows
+[14/129] Exec: Assertion of Executive Control of Independent Agencies (Exec
+  -> 1 rows
+[15/129] Exec: Assertion of Federal Jurisdiction Over Oil Pipelines
+  -> 1 rows
+[16/129] Exec: Attempt to Acquire Greenland
+  -> 1 rows
+[17/129] Exec: Ban on DEIA Initiatives in the Executive Branch and by Contr
+  -> 19 rows
+[18/129] Exec: Ban on Gender Affirming Care for Individuals Under the Age o
+  -> 3 rows
+[19/129] Exec: Ban on Transgender Athletes in Women’s Sports (Executive Ord
+  -> 3 rows
+[20/129] Exec: Ban on Transgender Individuals Serving in the Military (Exec
+  -> 4 rows
+[21/129] Exec: Biometric Information and Registration (Interim Final Rule: 
+  -> 2 rows
+[22/129] Exec: Birthright Citizenship (Executive Order 14160)
+  -> 11 rows
+[23/129] Exec: Border Enforcement
+  -> 1 rows
+[24/129] Exec: Changes to Health Directives and Related Regulations
+  -> 3 rows
+[25/129] Exec: Changes to Social Security Administration
+  -> 1 rows
+[26/129] Exec: Changes to Voter Registration Guidance for Naturalized Citiz
+  -> 1 rows
+[27/129] Exec: Compelled Political Speech in Government Agencies
+  -> 1 rows
+[28/129] Exec: Conditioning Agriculture Funds on State Transgender Athlete 
+  -> 1 rows
+[29/129] Exec: Conditions of Imprisonment (Restoring the Death Penalty and 
+  -> 1 rows
+[30/129] Exec: Construction on Public Lands
+  -> 7 rows
+[31/129] Exec: Contract Termination for Services to Unaccompanied Minors
+  -> 1 rows
+[32/129] Exec: Criminal Arrests and Prosecutions
+  -> 9 rows
+[33/129] Exec: Data Collection Requirements for Education Institutions
+  -> 1 rows
+[34/129] Exec: Denial of Federal Grants
+  -> 85 rows
+[35/129] Exec: Denial of State Department Funds
+  -> 1 rows
+[36/129] Exec: Department of Education “Dear Colleague Letter” Banning DEI-
+  -> 4 rows
+[37/129] Exec: Department of Justice Review of FBI Personnel Involved in Ja
+  -> 2 rows
+[38/129] Exec: Deportation to a Third Country/Torture Prohibition (ICE Emai
+  -> 4 rows
+[39/129] Exec: Deregulation and Other Regulatory Changes
+  -> 1 rows
+[40/129] Exec: DHS Revocation of Temporary Protected Status (TPS)
+  -> 13 rows
+[41/129] Exec: DHS/ICE actions toward U.S. citizens
+  -> 2 rows
+[42/129] Exec: Disclosure of Civil Servant Personnel Records
+  -> 1 rows
+[43/129] Exec: Disclosure of Personal and Financial Records to DOGE
+  -> 16 rows
+[44/129] Exec: Dismantling AmeriCorps (Executive Order 14222 - Implementing
+  -> 3 rows
+[45/129] Exec: Dismantling DHS Office for Civil Rights and Civil Liberties 
+  -> 1 rows
+[46/129] Exec: Dismantling Job Corps
+  -> 2 rows
+[47/129] Exec: Dismantling National Endowment for the Humanities
+  -> 2 rows
+[48/129] Exec: Dismantling National Institute for Occupational Safety and H
+  -> 1 rows
+[49/129] Exec: Dismantling of Consumer Financial Protection Bureau
+  -> 5 rows
+[50/129] Exec: Dismantling of Head Start
+  -> 1 rows
+[51/129] Exec: Dismantling of USAID
+  -> 6 rows
+[52/129] Exec: Dismantling the Community Relations Service
+  -> 1 rows
+[53/129] Exec: Dismantling the U.S. African Development Foundation (Executi
+  -> 2 rows
+[54/129] Exec: Dismantling/Restructuring of the Department of Education (Ex
+  -> 10 rows
+[55/129] Exec: Display and Flying of Non-Agency Flags
+  -> 1 rows
+[56/129] Exec: Election Law (Executive Order 14248)
+  -> 6 rows
+[57/129] Exec: Employment Actions During Government Shutdown
+  -> 1 rows
+[58/129] Exec: Ending Automatic Work Permit Extensions
+  -> 1 rows
+[59/129] Exec: Establishment of "Department of Government Efficiency" (DOGE
+  -> 6 rows
+[60/129] Exec: Exemption from Emission Standards
+  -> 1 rows
+[61/129] Exec: Extrajudicial Killings
+  -> 1 rows
+[62/129] Exec: Federal Land Use and Environmental Rollbacks
+  -> 3 rows
+[63/129] Exec: Federal Mediation and Conciliation Service (Executive Order 
+  -> 1 rows
+[64/129] Exec: Federalization of National Guard/Domestic Use of Military
+  -> 5 rows
+[65/129] Exec: Funding Freeze for Immigration Services (Executive Order 141
+  -> 1 rows
+[66/129] Exec: Governance and Defunding Global Media and Global Internet Fr
+  -> 9 rows
+[67/129] Exec: Government Employees' Speech
+  -> 5 rows
+[68/129] Exec: Government Facilities, Property, and Security Modifications
+  -> 2 rows
+[69/129] Exec: Habeas Corpus and Removal of Protestors (Protecting the Unit
+  -> 8 rows
+[70/129] Exec: Halting Wind Energy Approvals
+  -> 10 rows
+[71/129] Exec: Housing of Transgender Incarcerated Individuals (Executive O
+  -> 4 rows
+[72/129] Exec: Immigration Detention Facilities
+  -> 10 rows
+[73/129] Exec: Immigration Detention Policy
+  -> 11 rows
+[74/129] Exec: Immigration Enforcement Against Places of Worship and School
+  -> 5 rows
+[75/129] Exec: Immigration Metering Policy at U.S. Ports of Entry
+  -> 1 rows
+[76/129] Exec: Immigration Policy - Discontinuation of CBP One app (Executi
+  -> 1 rows
+[77/129] Exec: Immigration Policy - Expedited Removal (Executive Order 1415
+  -> 1 rows
+[78/129] Exec: Immigration Policy - Punishment of Sanctuary Cities and Stat
+  -> 6 rows
+[79/129] Exec: Immigration Policy - Termination of Categorical Parole Progr
+  -> 1 rows
+[80/129] Exec: Immigration Raids and Arrests
+  -> 14 rows
+[81/129] Exec: Implementation of “Restoring Truth and Sanity to American Hi
+  -> 2 rows
+[82/129] Exec: Invocation of Federal Acquisition Supply Chain Security Act
+  -> 2 rows
+[83/129] Exec: Issuance of New Rules in Immigration Proceedings
+  -> 2 rows
+[84/129] Exec: Labor’s Bureau of International Labor Affairs (ILAB) Ending 
+  -> 1 rows
+[85/129] Exec: Large-Scale Reductions in Force / Termination of Probationar
+  -> 11 rows
+[86/129] Exec: Layoffs within Bureau of Indian Education
+  -> 1 rows
+[87/129] Exec: Migrant Transfers to Guantánamo (Presidential Memorandum)
+  -> 4 rows
+[88/129] Exec: Modifications to National Parks Pass
+  -> 1 rows
+[89/129] Exec: Museums and Public Libraries (Executive Order 14238 - Contin
+  -> 2 rows
+[90/129] Exec: Noncompliance with Endangered Species Act
+  -> 3 rows
+[91/129] Exec: Noncompliance with Environmental Impact Requirements
+  -> 3 rows
+[92/129] Exec: Noncompliance with the Federal Advisory Committee Act
+  -> 1 rows
+[93/129] Exec: Other Habeas and Removal Actions
+  -> 15 rows
+[94/129] Exec: Passport Policy Targeting Transgender Individuals (Executive
+  -> 2 rows
+[95/129] Exec: Permitting Oil Drilling in Protected Lands or Wildlife Refug
+  -> 1 rows
+[96/129] Exec: Policy on Unaccompanied Minors
+  -> 5 rows
+[97/129] Exec: Proclamation Prohibiting Non-Citizens from Invoking Asylum P
+  -> 2 rows
+[98/129] Exec: Reduction of Indirect Cost Reimbursement Rate for Research I
+  -> 5 rows
+[99/129] Exec: Reduction of Indirect Cost Reimbursement Rate for State and 
+  -> 1 rows
+[100/129] Exec: Regulating Commercial Driver’s Licenses (Interim Final Rule:
+  -> 1 rows
+[101/129] Exec: Regulating the Public Service Loan Forgiveness (PSLF) Progra
+  -> 3 rows
+[102/129] Exec: Reinstatement of Schedule F for Policy/Career Employees (Exe
+  -> 4 rows
+[103/129] Exec: Religious Liberty Commission
+  -> 1 rows
+[104/129] Exec: Removal of Apportionment Information From OMB Website
+  -> 1 rows
+[105/129] Exec: Removal of Career Personnel
+  -> 7 rows
+[106/129] Exec: Removal of Climate Change and Environmental Information
+  -> 2 rows
+[107/129] Exec: Removal of Independent Agency Leaders
+  -> 17 rows
+[108/129] Exec: Removal of Information from HHS Websites Under Executive Ord
+  -> 2 rows
+[109/129] Exec: Removal to El Salvador/Fear of Persecution
+  -> 4 rows
+[110/129] Exec: Rescission of Approval for New York City Congestion Pricing 
+  -> 1 rows
+[111/129] Exec: Rescission of Collective Bargaining (Sec. Noem Memorandum Fe
+  -> 16 rows
+[112/129] Exec: Rescission of Federal Tax Credits for Solar and Wind Facilit
+  -> 1 rows
+[113/129] Exec: Rescission of Previous Executive Orders and Actions
+  -> 1 rows
+[114/129] Exec: Rescission of Previous Executive Orders and Actions, Includi
+  -> 5 rows
+[115/129] Exec: Response to FOIA and Records Retention
+  -> 98 rows
+[116/129] Exec: Restricting Press Freedom
+  -> 4 rows
+[117/129] Exec: Retaliation Against Protected Speech
+  -> 15 rows
+[118/129] Exec: Revocation of Government Agencies
+  -> 3 rows
+[119/129] Exec: Revocation of Worker Credentials at Ports of Entry
+  -> 1 rows
+[120/129] Exec: Sale of TikTok
+  -> 1 rows
+[121/129] Exec: Solicitation of Information from Career Employees
+  -> 1 rows
+[122/129] Exec: Student Loan Repayment Policy
+  -> 1 rows
+[123/129] Exec: Suspension of the U.S. Refugee Admissions Program (Executive
+  -> 2 rows
+[124/129] Exec: Tariffs
+  -> 8 rows
+[125/129] Exec: Termination of Inspectors General outside of Statutory Guide
+  -> 1 rows
+[126/129] Exec: Termination of Public Health Grants
+  -> 3 rows
+[127/129] Exec: Unleashing American Energy (Executive Order No. 14154); Endi
+  -> 15 rows
+[128/129] Exec: Vehicle Standards Preemption
+  -> 1 rows
+[129/129] Exec: Visa Policy
+  -> 8 rows
+Exec map: 702 cases
+
+=== Step 3: Scraping full case data ===
+Total unfiltered rows: 702
+Total cases: 702
+Wrote C:\Users\Car\grepos\LC-TAA\data\processed\cases.csv
+Wrote C:\Users\Car\grepos\LC-TAA\data\processed\filters.json
+Done.
+Running scraper... 
+base: C:\Users\Car\grepos\LC-TAA
+cases_path: C:\Users\Car\grepos\LC-TAA\data\processed\cases.csv
+cases_path exists: True
+=== Step 1: Scraping issue areas ===
+[1/12] Issue: Civil Liberties and Rights
+  -> 79 rows
+[2/12] Issue: Diversity, Equity, Inclusion, and Accessibility
+  -> 26 rows
+[3/12] Issue: Environment
+  -> 39 rows
+[4/12] Issue: Federalism
+  -> 7 rows
+[5/12] Issue: Government Grants, Loans, and Assistance
+  -> 140 rows
+[6/12] Issue: Immigration and Citizenship
+  -> 154 rows
+[7/12] Issue: International Institutions
+  -> 3 rows
+[8/12] Issue: Miscellaneous
+  -> 5 rows
+[9/12] Issue: Removal of Information from Government Websites
+  -> 5 rows
+[10/12] Issue: Structure of Government/Personnel
+  -> 138 rows
+[11/12] Issue: Trade Law
+  -> 8 rows
+[12/12] Issue: Transparency
+  -> 98 rows
+Issue map: 702 cases
+
+=== Step 2: Scraping executive actions ===
+Found 129 executive actions
+[1/129] Exec: Access of Lawyers to Immigrants in Detention (Executive Orde
+  -> 5 rows
+[2/129] Exec: Access to Health Care
+  -> 5 rows
+[3/129] Exec: Accessibility
+  -> 1 rows
+[4/129] Exec: Action Against Law Firms and Lawyers (Executive Order 14230 
+  -> 9 rows
+[5/129] Exec: Actions Against LGBTQ+ Government Employees
+  -> 2 rows
+[6/129] Exec: Actions toward International Criminal Court (Executive Order
+  -> 3 rows
+[7/129] Exec: Actions Toward Universities (Executive Order 14188, Pause or
+  -> 7 rows
+[8/129] Exec: Actions Toward US Institute of Peace
+  -> 2 rows
+[9/129] Exec: Agency Data Sharing for Immigration Enforcement Purposes (Ex
+  -> 3 rows
+[10/129] Exec: Alien Enemies Act Removals (Presidential Proclamation 10903)
+  -> 14 rows
+[11/129] Exec: Annual Asylum Fee
+  -> 1 rows
+[12/129] Exec: Assertion of Executive Control of Independent Agencies (Exec
+  -> 1 rows
+[13/129] Exec: Assertion of Federal Jurisdiction Over Oil Pipelines
+  -> 1 rows
+[14/129] Exec: Attempt to Acquire Greenland
+  -> 1 rows
+[15/129] Exec: Ban on DEIA Initiatives in the Executive Branch and by Contr
+  -> 19 rows
+[16/129] Exec: Ban on Gender Affirming Care for Individuals Under the Age o
+  -> 3 rows
+[17/129] Exec: Ban on Transgender Athletes in Women’s Sports (Executive Ord
+  -> 3 rows
+[18/129] Exec: Ban on Transgender Individuals Serving in the Military (Exec
+  -> 4 rows
+[19/129] Exec: Biometric Information and Registration (Interim Final Rule: 
+  -> 2 rows
+[20/129] Exec: Birthright Citizenship (Executive Order 14160)
+  -> 11 rows
+[21/129] Exec: Border Enforcement
+  -> 1 rows
+[22/129] Exec: Changes to Health Directives and Related Regulations
+  -> 3 rows
+[23/129] Exec: Changes to Social Security Administration
+  -> 1 rows
+[24/129] Exec: Changes to Voter Registration Guidance for Naturalized Citiz
+  -> 1 rows
+[25/129] Exec: Compelled Political Speech in Government Agencies
+  -> 1 rows
+[26/129] Exec: Conditioning Agriculture Funds on State Transgender Athlete 
+  -> 1 rows
+[27/129] Exec: Conditions of Imprisonment (Restoring the Death Penalty and 
+  -> 1 rows
+[28/129] Exec: Construction on Public Lands
+  -> 7 rows
+[29/129] Exec: Contract Termination for Services to Unaccompanied Minors
+  -> 1 rows
+[30/129] Exec: Criminal Arrests and Prosecutions
+  -> 9 rows
+[31/129] Exec: Data Collection Requirements for Education Institutions
+  -> 1 rows
+[32/129] Exec: Denial of Federal Grants
+  -> 85 rows
+[33/129] Exec: Denial of State Department Funds
+  -> 1 rows
+[34/129] Exec: Department of Education “Dear Colleague Letter” Banning DEI-
+  -> 4 rows
+[35/129] Exec: Department of Justice Review of FBI Personnel Involved in Ja
+  -> 2 rows
+[36/129] Exec: Deportation to a Third Country/Torture Prohibition (ICE Emai
+  -> 4 rows
+[37/129] Exec: Deregulation and Other Regulatory Changes
+  -> 1 rows
+[38/129] Exec: DHS Revocation of Temporary Protected Status (TPS)
+  -> 13 rows
+[39/129] Exec: DHS/ICE actions toward U.S. citizens
+  -> 2 rows
+[40/129] Exec: Disclosure of Civil Servant Personnel Records
+  -> 1 rows
+[41/129] Exec: Disclosure of Personal and Financial Records to DOGE
+  -> 16 rows
+[42/129] Exec: Dismantling AmeriCorps (Executive Order 14222 - Implementing
+  -> 3 rows
+[43/129] Exec: Dismantling DHS Office for Civil Rights and Civil Liberties 
+  -> 1 rows
+[44/129] Exec: Dismantling Job Corps
+  -> 2 rows
+[45/129] Exec: Dismantling National Endowment for the Humanities
+  -> 2 rows
+[46/129] Exec: Dismantling National Institute for Occupational Safety and H
+  -> 1 rows
+[47/129] Exec: Dismantling of Consumer Financial Protection Bureau
+  -> 5 rows
+[48/129] Exec: Dismantling of Head Start
+  -> 1 rows
+[49/129] Exec: Dismantling of USAID
+  -> 6 rows
+[50/129] Exec: Dismantling the Community Relations Service
+  -> 1 rows
+[51/129] Exec: Dismantling the U.S. African Development Foundation (Executi
+  -> 2 rows
+[52/129] Exec: Dismantling/Restructuring of the Department of Education (Ex
+  -> 10 rows
+[53/129] Exec: Display and Flying of Non-Agency Flags
+  -> 1 rows
+[54/129] Exec: Election Law (Executive Order 14248)
+  -> 6 rows
+[55/129] Exec: Employment Actions During Government Shutdown
+  -> 1 rows
+[56/129] Exec: Ending Automatic Work Permit Extensions
+  -> 1 rows
+[57/129] Exec: Establishment of "Department of Government Efficiency" (DOGE
+  -> 6 rows
+[58/129] Exec: Exemption from Emission Standards
+  -> 1 rows
+[59/129] Exec: Extrajudicial Killings
+  -> 1 rows
+[60/129] Exec: Federal Land Use and Environmental Rollbacks
+  -> 3 rows
+[61/129] Exec: Federal Mediation and Conciliation Service (Executive Order 
+  -> 1 rows
+[62/129] Exec: Federalization of National Guard/Domestic Use of Military
+  -> 5 rows
+[63/129] Exec: “Fork Directive” Deferred Resignation Offer to Federal Emplo
+  -> 1 rows
+[64/129] Exec: Funding Freeze for Immigration Services (Executive Order 141
+  -> 1 rows
+[65/129] Exec: Governance and Defunding Global Media and Global Internet Fr
+  -> 9 rows
+[66/129] Exec: Government Employees' Speech
+  -> 5 rows
+[67/129] Exec: Government Facilities, Property, and Security Modifications
+  -> 2 rows
+[68/129] Exec: Habeas Corpus and Removal of Protestors (Protecting the Unit
+  -> 8 rows
+[69/129] Exec: Halting Wind Energy Approvals
+  -> 10 rows
+[70/129] Exec: Housing of Transgender Incarcerated Individuals (Executive O
+  -> 4 rows
+[71/129] Exec: Immigration Detention Facilities
+  -> 10 rows
+[72/129] Exec: Immigration Detention Policy
+  -> 11 rows
+[73/129] Exec: Immigration Enforcement Against Places of Worship and School
+  -> 5 rows
+[74/129] Exec: Immigration Metering Policy at U.S. Ports of Entry
+  -> 1 rows
+[75/129] Exec: Immigration Policy - Discontinuation of CBP One app (Executi
+  -> 1 rows
+[76/129] Exec: Immigration Policy - Expedited Removal (Executive Order 1415
+  -> 1 rows
+[77/129] Exec: Immigration Policy - Punishment of Sanctuary Cities and Stat
+  -> 6 rows
+[78/129] Exec: Immigration Policy - Termination of Categorical Parole Progr
+  -> 1 rows
+[79/129] Exec: Immigration Raids and Arrests
+  -> 14 rows
+[80/129] Exec: Implementation of “Restoring Truth and Sanity to American Hi
+  -> 2 rows
+[81/129] Exec: Invocation of Federal Acquisition Supply Chain Security Act
+  -> 2 rows
+[82/129] Exec: Issuance of New Rules in Immigration Proceedings
+  -> 2 rows
+[83/129] Exec: Labor’s Bureau of International Labor Affairs (ILAB) Ending 
+  -> 1 rows
+[84/129] Exec: Large-Scale Reductions in Force / Termination of Probationar
+  -> 11 rows
+[85/129] Exec: Layoffs within Bureau of Indian Education
+  -> 1 rows
+[86/129] Exec: Migrant Transfers to Guantánamo (Presidential Memorandum)
+  -> 4 rows
+[87/129] Exec: Modifications to National Parks Pass
+  -> 1 rows
+[88/129] Exec: Museums and Public Libraries (Executive Order 14238 - Contin
+  -> 2 rows
+[89/129] Exec: Noncompliance with Endangered Species Act
+  -> 3 rows
+[90/129] Exec: Noncompliance with Environmental Impact Requirements
+  -> 3 rows
+[91/129] Exec: Noncompliance with the Federal Advisory Committee Act
+  -> 1 rows
+[92/129] Exec: Other Habeas and Removal Actions
+  -> 19 rows
+[93/129] Exec: Passport Policy Targeting Transgender Individuals (Executive
+  -> 2 rows
+[94/129] Exec: Permitting Oil Drilling in Protected Lands or Wildlife Refug
+  -> 1 rows
+[95/129] Exec: Policy on Unaccompanied Minors
+  -> 5 rows
+[96/129] Exec: Proclamation Prohibiting Non-Citizens from Invoking Asylum P
+  -> 2 rows
+[97/129] Exec: Reduction of Indirect Cost Reimbursement Rate for Research I
+  -> 5 rows
+[98/129] Exec: Reduction of Indirect Cost Reimbursement Rate for State and 
+  -> 1 rows
+[99/129] Exec: Regulating Commercial Driver’s Licenses (Interim Final Rule:
+  -> 1 rows
+[100/129] Exec: Regulating the Public Service Loan Forgiveness (PSLF) Progra
+  -> 3 rows
+[101/129] Exec: Reinstatement of Schedule F for Policy/Career Employees (Exe
+  -> 4 rows
+[102/129] Exec: Religious Liberty Commission
+  -> 1 rows
+[103/129] Exec: Removal of Apportionment Information From OMB Website
+  -> 1 rows
+[104/129] Exec: Removal of Career Personnel
+  -> 7 rows
+[105/129] Exec: Removal of Climate Change and Environmental Information
+  -> 2 rows
+[106/129] Exec: Removal of Independent Agency Leaders
+  -> 17 rows
+[107/129] Exec: Removal of Information from HHS Websites Under Executive Ord
+  -> 2 rows
+[108/129] Exec: Removal to El Salvador/Fear of Persecution
+  -> 4 rows
+[109/129] Exec: Rescission of Approval for New York City Congestion Pricing 
+  -> 1 rows
+[110/129] Exec: Rescission of Collective Bargaining (Sec. Noem Memorandum Fe
+  -> 16 rows
+[111/129] Exec: Rescission of Federal Tax Credits for Solar and Wind Facilit
+  -> 1 rows
+[112/129] Exec: Rescission of Previous Executive Orders and Actions
+  -> 1 rows
+[113/129] Exec: Rescission of Previous Executive Orders and Actions, Includi
+  -> 5 rows
+[114/129] Exec: Response to FOIA and Records Retention
+  -> 98 rows
+[115/129] Exec: Restricting Press Freedom
+  -> 4 rows
+[116/129] Exec: Retaliation Against Protected Speech
+  -> 15 rows
+[117/129] Exec: Revocation of Government Agencies
+  -> 3 rows
+[118/129] Exec: Revocation of Worker Credentials at Ports of Entry
+  -> 1 rows
+[119/129] Exec: Sale of TikTok
+  -> 1 rows
+[120/129] Exec: Solicitation of Information from Career Employees
+  -> 1 rows
+[121/129] Exec: Student Loan Repayment Policy
+  -> 1 rows
+[122/129] Exec: Suspension of the U.S. Refugee Admissions Program (Executive
+  -> 2 rows
+[123/129] Exec: Tariffs
+  -> 8 rows
+[124/129] Exec: “Temporary Pause” of Grants, Loans, and Assistance Programs
+  -> 7 rows
+[125/129] Exec: Termination of Inspectors General outside of Statutory Guide
+  -> 1 rows
+[126/129] Exec: Termination of Public Health Grants
+  -> 3 rows
+[127/129] Exec: Unleashing American Energy (Executive Order No. 14154); Endi
+  -> 15 rows
+[128/129] Exec: Vehicle Standards Preemption
+  -> 1 rows
+[129/129] Exec: Visa Policy
+  -> 8 rows
+Exec map: 706 cases
+
+=== Step 3: Scraping full case data ===
+Total unfiltered rows: 706
+Total cases: 706
+Wrote C:\Users\Car\grepos\LC-TAA\data\processed\cases.csv
+Wrote C:\Users\Car\grepos\LC-TAA\data\processed\filters.json
+Done.
+Pushing to GitHub... 
+warning: in the working copy of 'data/processed/cases.csv', LF will be replaced by CRLF the next time Git touches it
+[main cc7435e] Automated data update Wed 03/18/2026
+ 3 files changed, 53 insertions(+), 29 deletions(-)
+To https://github.com/thecarsun/LC-TAA
+   9267607..cc7435e  main -> main
+Done! 
+Wed 03/18/2026  8:57:43.90 

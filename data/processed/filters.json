@@ -1,6 +1,15 @@
 {
   "State AGs": [
-    "State A.G. Plaintiffs"
+    "Defendant-side State Amicus",
+    "Plaintiff-side State Amicus",
+    "Plaintiff-side State Amicus, Defendant-side State Amicus",
+    "Plaintiff-side State Amicus, Defendant-side State Amicus, State A.G. Plaintiffs",
+    "State A.G. Plaintiffs",
+    "State A.G. Plaintiffs, Defendant-side State Amicus",
+    "State A.G. Plaintiffs, Plaintiff-side State Amicus",
+    "State A.G. Plaintiffs, Plaintiff-side State Amicus, Defendant-side State Amicus",
+    "State A.G. Plaintiffs, State-intervenor-Defendant",
+    "State-intervenor-Defendant"
   ],
   "Case Status": [
     "Awaiting Court Ruling",

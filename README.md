@@ -17,7 +17,7 @@ a better understanding of the trends in the different areas over time.
 - Change detection
 - Data visualization
 - Canonical data model
-- Auto-generated outputs (reports, dashboards)
+- Auto generated outputs (reports, dashboards)
 - Github actions for automation
 
 **Ethical and Responsible Data Use**
@@ -113,7 +113,7 @@ a better understanding of the trends in the different areas over time.
 
 Dashboard: Live at [LC-TAA](https://lc-taa.streamlit.app/) 
 
-Note: the dashboard is updated automatically at 6 AM Pacific Time
+Note: the dashboard is updated automatically at 8 AM Pacific Time
 
 **Updates**
 

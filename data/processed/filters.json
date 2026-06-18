@@ -13,10 +13,10 @@
     "State-intervenor-Defendant, State-intervenor-Plaintiff"
   ],
   "Case Status": [
-    "Awaiting Court Ruling",
     "Case Closed",
     "Case Closed in Favor of Plaintiff",
     "Case Closed/Dismissed in Favor of Government",
+    "Case Pending",
     "Government Action Blocked",
     "Government Action Blocked Pending Appeal",
     "Government Action Not Blocked Pending Appeal",

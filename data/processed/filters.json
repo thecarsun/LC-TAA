@@ -14,15 +14,25 @@
     "State-intervenor-Plaintiff, State-intervenor-Defendant"
   ],
   "Case Status": [
+    "Block Denied; Appeal Pending",
     "Case Closed",
-    "Case Closed in Favor of Plaintiff",
+    "Case Closed in Favor of Plaintiff(s)",
     "Case Closed/Dismissed in Favor of Government",
+    "Case Closed; Split Outcome",
     "Case Pending",
     "Government Action Blocked",
-    "Government Action Blocked Pending Appeal",
-    "Government Action Not Blocked (Pending Appeal)",
+    "Government Action Blocked in Part; Block Denied in Part",
+    "Government Action Blocked in Part; Block Denied in Part; Appeal Pending",
+    "Government Action Blocked; Appeal Pending",
+    "Government Action Blocked; Appellate Court Affirmed Block",
     "Government Action Temporarily Blocked",
     "Government Action Temporarily Blocked in Part; Temporary Block Denied in Part",
+    "Government Action Temporarily Blocked in Part; Temporary Block Denied in Part; Appeal Pending",
+    "Government Action Temporarily Blocked; Appeal Pending",
+    "Government Action Temporarily Blocked; Appellate Court Affirmed Block",
+    "Government Action Temporarily Unblocked by Appellate Court",
+    "Government Action Unblocked by Appellate Court",
+    "Temporary Block Denied; Appeal Pending",
     "Temporary Block of Government Action Denied"
   ],
   "Issue": [

@@ -15,7 +15,7 @@
     "State-intervenor-Plaintiff, State-intervenor-Defendant"
   ],
   "Case Status": [
-    "Block Denied; Appeal Pending",
+    "Block of Government Action Denied; Appeal Pending",
     "Case Closed",
     "Case Closed in Favor of Plaintiff(s)",
     "Case Closed/Dismissed in Favor of Government",
@@ -33,8 +33,8 @@
     "Government Action Temporarily Blocked; Appellate Court Affirmed Block",
     "Government Action Temporarily Unblocked by Appellate Court",
     "Government Action Unblocked by Appellate Court",
-    "Temporary Block Denied; Appeal Pending",
-    "Temporary Block of Government Action Denied"
+    "Temporary Block of Government Action Denied",
+    "Temporary Block of Government Action Denied; Appeal Pending"
   ],
   "Issue": [
     "Civil Liberties and Rights",
@@ -88,6 +88,7 @@
     "Construction or Modification of Public Lands",
     "Contract Termination for Services to Unaccompanied Minors",
     "Criminal Arrests and Prosecutions",
+    "DEA Enforcement Actions",
     "DHS Revocation of Temporary Protected Status (TPS)",
     "DHS/ICE Actions Toward U.S. Citizens",
     "Data Collection Requirements for Education Institutions",

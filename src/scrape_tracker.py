@@ -1,5 +1,7 @@
 
-# v8 scraper
+# v8.1 scraper
+# 2026-10-28
+# Reliability update: Playwright navigation and page cleanup, retry logic for page load, progress saving for executive actions.
 
 from __future__ import annotations
 
@@ -43,18 +45,43 @@ ISSUE_OPTIONS = [
 
 
 def load_page(browser):
-    page = browser.new_page()
-    for attempt in range(3):
-        try:
-            page.goto(URL, timeout=60000, wait_until="networkidle")
-            page.wait_for_selector("#tablepress-42 tbody tr", timeout=30000)
-            page.wait_for_timeout(2000)
-            return page
-        except Exception as e:
-            print(f"  Retry {attempt + 1}: {e}")
-            time.sleep(3)
-    raise RuntimeError("Failed to load page after 3 attempts.")
+    """
+    LC-TAA v8.1: Improved Playwright navigation reliability. 
 
+    - Wait for DOM content instead of network idle.
+    - Verify the litigation table is present.
+    - Retry failed navigation up to three times,
+    - Close browser pages when all retires fail. 
+    """
+    page = browser.new_page()
+
+    try:
+        for attempt in range(1,4):
+            try:
+                page.goto(
+                    URL, 
+                    timeout=60000, 
+                    wait_until="domcontentloaded"
+                )
+                page.wait_for_selector(
+                    "#tablepress-42 tbody tr", 
+                    timeout=30000,
+                )
+                
+                page.wait_for_timeout(2000)
+                return page
+            
+            except Exception as e:
+                print(f"  Retry {attempt}/3: {e}", flush=True)
+
+                if attempt < 3:
+                    time.sleep(3)
+        raise RuntimeError(
+            "Failed to load page after 3 attempts."
+        )
+    except Exception:
+        page.close()
+        raise
 
 def get_exec_action_options(browser) -> List[str]:
     page = load_page(browser)

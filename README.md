@@ -108,6 +108,10 @@ a better understanding of the trends in the different areas over time.
 - Filter values (Issue, Executive Action) are not table columns — they are 
   stored in dropdown widgets and must be scraped separately per filter value
 
+- Automation success is not the same as pipeline success. Windows Task Scheduler may report a successful run even when a Python subprocess fails, 
+  unless the batch script explicitly checks and propagates exit codes. Adding failure handling prevents incomplete scraping runs from being silently treated as
+  successful updates.
+
 
 ### STATUS
 
@@ -117,10 +121,23 @@ Note: the dashboard is updated automatically at 8 AM Pacific Time
 
 **Updates**
 
-- `2.28.26`: Updated the scorecards to respond to filters and adjusted some charts and some of the very tiny default font sizes
-- `3.04.26`: Streamlit Cache behavior fix. `@st.cache_data` caches the CSV in memory so it doesn't re-read it on every interaction. 
+`2.28.26`: 
+- Updated the scorecards to respond to filters and adjusted some charts and some of the very tiny default font sizes
+
+`3.04.26`: 
+- Streamlit Cache behavior fix. `@st.cache_data` caches the CSV in memory so it doesn't re-read it on every interaction. 
   But when new data gets pushed to GitHub and Streamlit redeploys, the cache needs to be cleared to pick up the fresh CSV.
   Fix: add `ttl`(time to live) to `@st.cache_data`to automatically expire and reread the CSV after a set time. 
+
+`10.28.26`:
+
+**v8.1 - Scraper Reliability & Automation Error Handling:**
+  - Improved Playwright page loading by replacing *networkidle* with *domcontentloaded* to reduce unnecessary navigation timeouts.
+  - Enhanced existing rety logic with better error reporting and browser page cleanup after failed attempts. 
+  - Improved resilience against intermittent website latency while preserving the existing scraping workflow and data structure.
+  - Updated update.bat to validate scraper execution and Git command exit codes, preventing failed scraping runs from proceeding to GitHub synchronization.
+  - Added Git change detection to skip unnecessary commits when no dataset changes are found.
+  - Improved automatoon logging and failture reporting so Windows Task Scheduler can accurately distinguish successful runs from failed executions. 
 
 **Future**
 - More to come
